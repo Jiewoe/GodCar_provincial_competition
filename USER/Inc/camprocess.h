@@ -18,19 +18,8 @@ typedef struct
 } CamStruct;
 
 
-//没用的东西
-typedef struct
-{
-    float k;
-    float b;
-} Linestruct;
-
-//有东西没有用！！！！！！！！！！！ 
-short CenterLineFind (uint8_t* buffer, short width, short hight, uint8_t* centerpoint);
-
-
-
-void CannyEdgeTest( CamStruct *ov5640, uint8_t lowThr);
+//更改了CannyEdgeTest 的返回值
+short CannyEdgeTest( CamStruct *ov5640, uint8_t lowThr);
 float Fsqrt(float x);
 uint8_t Atan2(float y, float x);
 void Quicksort(float array[], uint8_t maxlen, uint8_t begin, uint8_t end);

@@ -31,7 +31,7 @@ void CenterLine_show(CamStruct *ov5640);
 % y
 *---------------------------------------*/
 
-void CannyEdgeTest(CamStruct *ov5640, uint8_t lowThr)
+short CannyEdgeTest(CamStruct *ov5640, uint8_t lowThr)
 {
     short wideth = ov5640->CamWide;
     short height = ov5640->CanHigh;
@@ -174,7 +174,7 @@ void CannyEdgeTest(CamStruct *ov5640, uint8_t lowThr)
         sum4 += y;
     }
 
-    //========中心散点显示========
+    //========中心散点显示========（可去除）
     for (y = 1; y < height; y++)
     {
         org[y][center[y]] = 0xf0;
@@ -185,22 +185,7 @@ void CannyEdgeTest(CamStruct *ov5640, uint8_t lowThr)
     k = (sum1*1.0-(sum3*sum4*1.0)/(height-1))/(sum2*1.0-(sum4*sum4*1.0)/(height-1));
     b = sum3*1.0/(height-1) - k*(sum4*1.0/(height-1));
 
-
-/*
-    for (y = 0; y < height; y++)
-    {
-        sum1 = sum1 + y * center[y];
-        sum2 = sum2 + center[y];
-        sum3 = sum3 + center[y] * center[y];
-    }
-
-    k = (sum1 - (float)height / 2 * sum2) / (sum3 - sum2 * sum2 / height);
-    sum2 = sum2 / height;
-    b = height / 2 - k * sum2;
-
-*/
-
-    //=======展示拟合之后的线
+    //=======展示拟合之后的线==========
 
     for (y = 1; y < height; y++)
     {
@@ -208,13 +193,15 @@ void CannyEdgeTest(CamStruct *ov5640, uint8_t lowThr)
         org[y][x] = 0xf0;
     }
 
-
+    //==============目标线==============
     for (x=0; x<wideth; x++)
     {
         org[height*targetlinePer/100][x] = 0xf0;
     }
 
-    
+
+    //==============这里返回线与目标线的插值============
+    return ;
 }
 
 //    uint8_t* center;
@@ -343,6 +330,25 @@ void Swap(float *a, float *b)
     *a = *b;
     *b = temp;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+//以下全都没用！！！！！！！！！！！！！！！！
+
+
+
+
+
 
 //摄像头中心线处理
 //应当控制摄像头画面范围
