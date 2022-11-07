@@ -229,3 +229,4 @@ void InitBuffer(char *buffer, uint32_t len)
         *(buffer+i) = '\0';
     }
 }
+
