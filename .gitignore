@@ -8,4 +8,3 @@ Drivers/*.icf
 Drivers/*.o
 MDK-ARM/.vscode/c_cpp_properties.json
 MDK-ARM/.vscode/keil-assistant.log
-MDK-ARM/.vscode/c_cpp_properties.json
