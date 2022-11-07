@@ -12,6 +12,7 @@
         "stm32h7xx_it.h": "c",
         "main.h": "c",
         "servodriver.h": "c",
-        "display.h": "c"
+        "display.h": "c",
+        "esp8266.h": "c"
     }
 }

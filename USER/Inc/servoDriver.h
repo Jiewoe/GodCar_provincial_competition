@@ -77,5 +77,6 @@ void HolderControl(uint16_t angle);
 void PawControl(uint8_t angle);
 void ArmControl(uint8_t LeftAngle, uint8_t RightAngle);
 void CargoControl(uint8_t angle);
+void Servo_Init(void);
 
 #endif

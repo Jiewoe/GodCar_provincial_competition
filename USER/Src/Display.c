@@ -7,8 +7,8 @@ uint8_t Display_Buffer[64];
 
 void DisPlay_Init()
 {
-    __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE); //使能IDLE中断
-   HAL_UART_Receive_DMA(&huart1,Display_Buffer,64);//开启串口DMA接收
+    __HAL_UART_ENABLE_IT(&huart4, UART_IT_IDLE); //使能IDLE中断
+   HAL_UART_Receive_DMA(&huart4,Display_Buffer,64);//开启串口DMA接收
 
 }
 

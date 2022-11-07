@@ -45,6 +45,27 @@ void InitServoTest(uint8_t CargoAngle, uint8_t PawAngle, uint16_t HolderAngle, u
 
 /*
 
+    初始化
+    一般使用
+
+*/
+
+void Servo_Init()
+{
+    HAL_TIM_PWM_Start (&htim5, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start (&htim5, TIM_CHANNEL_2);
+    HAL_TIM_PWM_Start (&htim5, TIM_CHANNEL_3);
+    HAL_TIM_PWM_Start (&htim5, TIM_CHANNEL_4);
+    HAL_TIM_PWM_Start (&htim12, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start (&htim12, TIM_CHANNEL_2);
+    HAL_TIM_PWM_Start (&htim14, TIM_CHANNEL_1);
+}
+
+
+
+
+/*
+
     控制函数:
     >> 检测角度是否正确
     >> 更改占空比

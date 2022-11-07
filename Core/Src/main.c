@@ -36,6 +36,7 @@
 #include "motor.h"
 #include "ov5640test.h"
 #include "JY60.h"
+#include "Display.h"
 
 /* USER CODE END Includes */
 
@@ -134,11 +135,13 @@ int main(void)
   MX_USART6_UART_Init();
   MX_UART4_Init();
   /* USER CODE BEGIN 2 */
-
+    
     // Motor_Init();
     // testInit  ();
+    Servo_Init();
+    DisPlay_Init();
 
-    JY60Init (&huart5);
+    //JY60Init (&huart5);
     //JY60DMAInit ();
     HAL_UART_Receive_IT (&huart5, DMARecieveBuffer_JY60, JY60_MAX_SIZE);
 
@@ -223,7 +226,7 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
-//系统定时器中�????
+//系统定时器中�????
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     /* Prevent unused argument(s) compilation warning */
@@ -258,7 +261,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
             // Lateral_correction();
         }
 
-        //写完成条�????
+        //写完成条�????
         if (IF_MOVE == 0)
         {
             procedure++;
@@ -273,9 +276,19 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         HAL_UART_Transmit (&huart8, DMARecieveBuffer_JY60, JY60_MAX_SIZE, 0xffff);
         HAL_UART_Receive_IT (&huart5, DMARecieveBuffer_JY60, JY60_MAX_SIZE);
     }
-
-    if ()
 }
+
+
+
+void USAR_UART_IDLECallback(UART_HandleTypeDef *huart)
+{
+    if (huart == &huart4)
+    {
+        DisPlay_Porcess (Display_Buffer);
+        HAL_UART_Receive_DMA (&huart4, Display_Buffer, 64);
+    }
+}
+
 
 
 /* USER CODE END 4 */

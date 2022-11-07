@@ -334,6 +334,14 @@ void UART4_IRQHandler(void)
   HAL_UART_IRQHandler(&huart4);
   /* USER CODE BEGIN UART4_IRQn 1 */
 
+ if(RESET != __HAL_UART_GET_FLAG(&huart4, UART_FLAG_IDLE)) //判断idle标志被置位
+	{ 
+		__HAL_UART_CLEAR_IDLEFLAG(&huart4);//清除标志位
+		HAL_UART_DMAStop(&huart4); //  停止DMA传输
+        USAR_UART_IDLECallback(&huart4);
+        
+	 }
+
   /* USER CODE END UART4_IRQn 1 */
 }
 
