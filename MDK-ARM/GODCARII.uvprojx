@@ -605,16 +605,6 @@
               <FilePath>..\USER\Src\servoDriver.c</FilePath>
             </File>
             <File>
-              <FileName>motor.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\USER\Inc\motor.h</FilePath>
-            </File>
-            <File>
-              <FileName>servoDriver.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\USER\Inc\servoDriver.h</FilePath>
-            </File>
-            <File>
               <FileName>esp8266.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\USER\Src\esp8266.c</FilePath>
@@ -623,16 +613,6 @@
               <FileName>JY60.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\USER\Src\JY60.c</FilePath>
-            </File>
-            <File>
-              <FileName>esp8266.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\USER\Inc\esp8266.h</FilePath>
-            </File>
-            <File>
-              <FileName>JY60.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\USER\Inc\JY60.h</FilePath>
             </File>
           </Files>
         </Group>
