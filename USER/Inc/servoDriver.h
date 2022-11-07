@@ -22,7 +22,7 @@
 
 */
 #define ANGLE_180   0.125
-#define ANGLE_270   0.175
+#define ANGLE_270   0.125
 
 /*
 
@@ -67,14 +67,15 @@ extern TIM_HandleTypeDef htim14;
 
 extern uint8_t NowAngle_Cargo;
 extern uint8_t NowAngle_Paw;
-extern uint8_t NowAngle_Arm;
-extern int NowAngle_Holder;
+extern uint8_t NowAngle_LeftArm;
+extern uint8_t NowAngle_RightArm;
+extern uint16_t NowAngle_Holder;
 
 void InitServo(void);
-void InitServoTest(uint8_t CargoAngle, uint8_t PawAngle, uint8_t HolderAngle, uint8_t ArmAngle);
-void HolderControl(int angle);
-void PawControl(int angle);
-void ArmControl(int angle);
-void CargoControl(int angle);
+void InitServoTest(uint8_t CargoAngle, uint8_t PawAngle, uint16_t HolderAngle, uint8_t LeftArmAngle, uint8_t RightArmAngle);
+void HolderControl(uint16_t angle);
+void PawControl(uint8_t angle);
+void ArmControl(uint8_t LeftAngle, uint8_t RightAngle);
+void CargoControl(uint8_t angle);
 
 #endif

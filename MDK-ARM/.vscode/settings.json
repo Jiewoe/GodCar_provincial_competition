@@ -10,6 +10,7 @@
         "ov5640test.h": "c",
         "usart.h": "c",
         "stm32h7xx_it.h": "c",
-        "main.h": "c"
+        "main.h": "c",
+        "servodriver.h": "c"
     }
 }

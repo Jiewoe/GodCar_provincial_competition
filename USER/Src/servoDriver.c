@@ -11,8 +11,9 @@
 
 uint8_t NowAngle_Cargo;
 uint8_t NowAngle_Paw;
-uint8_t NowAngle_Arm;
-int NowAngle_Holder;
+uint8_t NowAngle_LeftArm;
+uint8_t NowAngle_RightArm;
+uint16_t NowAngle_Holder;
 
 /*
 
@@ -20,13 +21,12 @@ int NowAngle_Holder;
     提供有参构造和无参构造两种初始化函数
     有参构造作调试用
 
+    无参构造删除 貌似是没什么用
+
 */
-void InitServo(void)
-{
 
-}
 
-void InitServoTest(uint8_t CargoAngle, uint8_t PawAngle, uint8_t HolderAngle, uint8_t ArmAngle)
+void InitServoTest(uint8_t CargoAngle, uint8_t PawAngle, uint16_t HolderAngle, uint8_t LeftArmAngle, uint8_t RightArmAngle)
 {
     HAL_TIM_PWM_Start (&htim5, TIM_CHANNEL_1);
     HAL_TIM_PWM_Start (&htim5, TIM_CHANNEL_2);
@@ -37,7 +37,7 @@ void InitServoTest(uint8_t CargoAngle, uint8_t PawAngle, uint8_t HolderAngle, ui
     HAL_TIM_PWM_Start (&htim14, TIM_CHANNEL_1);
 
     PawControl (PawAngle);
-    ArmControl (ArmAngle);
+    ArmControl (LeftArmAngle, RightArmAngle);
     CargoControl  (CargoAngle);
     HolderControl (HolderAngle);
 }
@@ -51,50 +51,49 @@ void InitServoTest(uint8_t CargoAngle, uint8_t PawAngle, uint8_t HolderAngle, ui
     >> 更新角度nowAngle
 
 */
-void HolderControl(int angle)
+void HolderControl(uint16_t angle)
 {
-    int temp = angle+NowAngle_Holder;
-    if(temp>=0 && temp<=270)
+    if(angle<=270)
     {
         Servo5_Angle = (uint32_t)((angle*1.0/270.0)*HOLDER_FULL_ANGLE);
-        NowAngle_Holder += angle;
+        NowAngle_Holder = angle;
     }
     else
         return;
 }
 
-void PawControl(int angle)
+void PawControl(uint8_t angle)
 {
-    int temp = angle+NowAngle_Paw;
-    if(temp>=0 && temp<=180)
+    if(angle<=180)
     {
         Servo4_Angle = (uint32_t)((angle*1.0/180.0)*PAW_FULL_ANGLE);
-        NowAngle_Paw += angle;
+        NowAngle_Paw = angle;
     }
     else
         return;
 }
 
-void ArmControl(int angle)
+void ArmControl(uint8_t LeftAngle, uint8_t RightAngle)
 {
-    int temp = angle+NowAngle_Arm;
-    if(temp>=0 && temp<=180)
+    if(LeftAngle<=180)
     {
-        uint32_t armAjustAngle = (uint32_t)((angle*1.0/180.0)*ARM_FULL_ANGLE);
+        Servo6_Angle = (uint32_t)((LeftAngle*1.0/180.0)*ARM_FULL_ANGLE);
 
-        Servo6_Angle = armAjustAngle;
-        Servo7_Angle = armAjustAngle;
+        NowAngle_LeftArm = LeftAngle;
+    }
+    if (RightAngle<=180)
+    {
+        Servo7_Angle = (uint32_t)((RightAngle*1.0/180.0)*ARM_FULL_ANGLE);
 
-        NowAngle_Arm += angle;
+        NowAngle_RightArm = RightAngle;
     }
     else
         return;
 }
 
-void CargoControl(int angle)
+void CargoControl(uint8_t angle)
 {
-    int temp = angle+NowAngle_Cargo;
-    if(temp>=0 && temp<=180)
+    if(angle<=180)
     {
         uint32_t cargoAjustAngle = (uint32_t)((angle*1.0/180.0)*CARGO_FULL_ANGLE);
 
@@ -102,7 +101,7 @@ void CargoControl(int angle)
         Servo2_Angle = cargoAjustAngle;
         Servo3_Angle = cargoAjustAngle;
 
-        NowAngle_Cargo += angle;
+        NowAngle_Cargo = angle;
     }
     else
         return;

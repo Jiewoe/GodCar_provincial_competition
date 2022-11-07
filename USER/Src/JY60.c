@@ -118,6 +118,11 @@ void JY60Process(UART_HandleTypeDef *huart)
     }
 }
 
+/*
+
+    提取数据函数，从所有接收到的数据中提取三组有用的;
+
+*/
 void refineData(void)
 {
     uint8_t cnt=0, i=0, j=0, flag=0;
