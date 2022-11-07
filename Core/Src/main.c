@@ -272,6 +272,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         HAL_UART_Transmit (&huart8, DMARecieveBuffer_JY60, JY60_MAX_SIZE, 0xffff);
         HAL_UART_Receive_IT (&huart5, DMARecieveBuffer_JY60, JY60_MAX_SIZE);
     }
+
+    if 
 }
 
 
