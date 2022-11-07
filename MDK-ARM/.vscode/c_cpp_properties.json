@@ -441,20 +441,20 @@
         {
             "name": "GODCARII",
             "includePath": [
-                "c:\\Users\\suyu\\Desktop\\GODCAR\\Core\\Inc",
-                "c:\\Users\\suyu\\Desktop\\GODCAR\\Drivers\\STM32H7xx_HAL_Driver\\Inc",
-                "c:\\Users\\suyu\\Desktop\\GODCAR\\Drivers\\STM32H7xx_HAL_Driver\\Inc\\Legacy",
-                "c:\\Users\\suyu\\Desktop\\GODCAR\\Drivers\\CMSIS\\Device\\ST\\STM32H7xx\\Include",
-                "c:\\Users\\suyu\\Desktop\\GODCAR\\Drivers\\CMSIS\\Include",
-                "c:\\Users\\suyu\\Desktop\\GODCAR\\USER\\Inc",
-                "c:\\Users\\suyu\\Desktop\\GODCAR\\USER\\Src",
+                "c:\\Users\\suyu\\Desktop\\GODCARII\\Core\\Inc",
+                "c:\\Users\\suyu\\Desktop\\GODCARII\\Drivers\\STM32H7xx_HAL_Driver\\Inc",
+                "c:\\Users\\suyu\\Desktop\\GODCARII\\Drivers\\STM32H7xx_HAL_Driver\\Inc\\Legacy",
+                "c:\\Users\\suyu\\Desktop\\GODCARII\\Drivers\\CMSIS\\Device\\ST\\STM32H7xx\\Include",
+                "c:\\Users\\suyu\\Desktop\\GODCARII\\Drivers\\CMSIS\\Include",
+                "c:\\Users\\suyu\\Desktop\\GODCARII\\USER\\Inc",
+                "c:\\Users\\suyu\\Desktop\\GODCARII\\USER\\Src",
                 "D:\\keil5\\ARM\\ARMCLANG\\include",
                 "D:\\keil5\\ARM\\ARMCLANG\\include\\arm_linux",
                 "D:\\keil5\\ARM\\ARMCLANG\\include\\arm_linux_compat",
                 "D:\\keil5\\ARM\\ARMCLANG\\include\\libcxx",
-                "c:\\Users\\suyu\\Desktop\\GODCAR\\MDK-ARM",
-                "c:\\Users\\suyu\\Desktop\\GODCAR\\Core\\Src",
-                "c:\\Users\\suyu\\Desktop\\GODCAR\\Drivers\\STM32H7xx_HAL_Driver\\Src"
+                "c:\\Users\\suyu\\Desktop\\GODCARII\\MDK-ARM",
+                "c:\\Users\\suyu\\Desktop\\GODCARII\\Core\\Src",
+                "c:\\Users\\suyu\\Desktop\\GODCARII\\Drivers\\STM32H7xx_HAL_Driver\\Src"
             ],
             "defines": [
                 "USE_HAL_DRIVER",
