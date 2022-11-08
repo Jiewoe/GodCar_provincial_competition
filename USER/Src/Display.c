@@ -18,11 +18,11 @@ void DisPlay_Porcess(uint8_t *buffer)
     {
         return;
     }
-    if (buffer[1]==0xB1&&buffer[2]==0x11)
+    if (buffer[1]==0xB1&&buffer[2]==0x11)//滑块指令
     {
-        if (buffer[4]==0x00)
+        if (buffer[4]==0x00)//0号屏幕
         {
-            if (buffer[6]==0x01)
+            if (buffer[6]==0x01)//1号滑块
             {
                 HolderControl((uint16_t)(buffer[10]*256+buffer[11]));
             }
