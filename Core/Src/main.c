@@ -279,7 +279,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 }
 
 
-
+//空闲中断处理函数
 void USAR_UART_IDLECallback(UART_HandleTypeDef *huart)
 {
     if (huart == &huart4)
