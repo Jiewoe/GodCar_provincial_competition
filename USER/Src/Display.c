@@ -3,7 +3,7 @@
 // dma配置与空闲中断在主函数里面
 
 
-uint8_t Display_Buffer[64];
+uint8_t *Display_Buffer = 0x24000000+0x40000;
 
 void DisPlay_Init()
 {
@@ -24,7 +24,7 @@ void DisPlay_Porcess(uint8_t *buffer)
         {
             if (buffer[6]==0x01)
             {
-                HolderControl(buffer[11]);
+                HolderControl((uint16_t)(buffer[10]*256+buffer[11]));
             }
         }
     }

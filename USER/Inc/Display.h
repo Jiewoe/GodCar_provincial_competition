@@ -4,7 +4,7 @@
 #include "stm32h7xx_hal.h"
 #include "servoDriver.h"
 
-extern uint8_t Display_Buffer[64];
+extern uint8_t *Display_Buffer;
 extern UART_HandleTypeDef huart4;
 
 void DisPlay_Porcess(uint8_t *buffer);

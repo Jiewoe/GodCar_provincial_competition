@@ -201,7 +201,7 @@ short CannyEdgeTest(CamStruct *ov5640, uint8_t lowThr)
 
 
     //==============这里返回线与目标线的插值============
-    return ;
+    return 0;
 }
 
 //    uint8_t* center;

@@ -21,8 +21,8 @@
     定义最大角度对应占空比比例
 
 */
-#define ANGLE_180   0.125
-#define ANGLE_270   0.125
+#define ANGLE_180   0.1
+#define ANGLE_270   0.1
 
 /*
 

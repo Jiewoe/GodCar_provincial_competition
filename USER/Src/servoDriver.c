@@ -76,7 +76,7 @@ void HolderControl(uint16_t angle)
 {
     if(angle<=270)
     {
-        Servo5_Angle = (uint32_t)((angle*1.0/270.0)*HOLDER_FULL_ANGLE);
+        Servo5_Angle = (uint32_t)((angle*1.0/270.0)*HOLDER_FULL_ANGLE)+500;
         NowAngle_Holder = angle;
     }
     else
@@ -87,13 +87,15 @@ void PawControl(uint8_t angle)
 {
     if(angle<=180)
     {
-        Servo4_Angle = (uint32_t)((angle*1.0/180.0)*PAW_FULL_ANGLE);
+        Servo4_Angle = (uint32_t)((angle*1.0/180.0)*PAW_FULL_ANGLE)+500;
         NowAngle_Paw = angle;
     }
     else
         return;
 }
 
+
+//未改
 void ArmControl(uint8_t LeftAngle, uint8_t RightAngle)
 {
     if(LeftAngle<=180)
