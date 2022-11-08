@@ -227,7 +227,7 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
-//系统定时器中�?????
+//系统定时器中�??????
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     /* Prevent unused argument(s) compilation warning */
@@ -262,7 +262,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
             // Lateral_correction();
         }
 
-        //写完成条�?????
+        //写完成条�??????
         if (IF_MOVE == 0)
         {
             procedure++;
