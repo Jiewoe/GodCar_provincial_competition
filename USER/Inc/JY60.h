@@ -8,8 +8,8 @@
 
 
 
-extern uint8_t DMARecieveBuffer_JY60[JY60_MAX_SIZE];
-extern uint8_t Data_JY60[JY60_Data_Size];
+extern uint8_t *DMARecieveBuffer_JY60;
+extern uint8_t *Data_JY60;
 
 void JY60Init (UART_HandleTypeDef *huartx);
 // int  JY60_Message_Pross (uint8_t *buffer, ACCE *acce, ANGV *angv, ANG *ang);

@@ -348,9 +348,9 @@ void USART1_IRQHandler(void)
 void TIM8_BRK_TIM12_IRQHandler(void)
 {
     /* USER CODE BEGIN TIM8_BRK_TIM12_IRQn 0 */
-
-    /* USER CODE END TIM8_BRK_TIM12_IRQn 0 */
     HAL_TIM_IRQHandler(&htim8);
+    /* USER CODE END TIM8_BRK_TIM12_IRQn 0 */
+
     HAL_TIM_IRQHandler(&htim12);
     /* USER CODE BEGIN TIM8_BRK_TIM12_IRQn 1 */
 

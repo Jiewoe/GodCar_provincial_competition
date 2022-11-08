@@ -31,9 +31,19 @@ extern DMA_HandleTypeDef hdma_usart2_tx;
 extern uint8_t target;
 
 //内存控制
-#define Camera_Buffer 0x24000000
-#define Usart_Buffer 0x24000000 + Display_Width*Display_Height
+/*
+    Camera_Buffer 0x24000000
+    Usart_Buffer 0x24000000 + Display_Width*Display_Height
+    Display_Buffer = 0x24000000+0x40000; 宽度64
+    uint8_t *DMARecieveBuffer_JY60 = 0x24040040; 宽度53
+    uint8_t *Data_JY60 = 0x24040040 + JY60_MAX_SIZE; 宽度33
+    
 
+*/
+
+
+#define Camera_Buffer 0x24000000 // 原始数据dma位置
+#define Usart_Buffer 0x24000000 + Display_Width*Display_Height //处理过程中数据位置
 
 extern uint8_t OpenMV1[7];
 extern uint8_t OpenMV2[7];

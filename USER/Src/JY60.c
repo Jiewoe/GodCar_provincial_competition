@@ -1,7 +1,7 @@
 #include "JY60.h"
 
-uint8_t DMARecieveBuffer_JY60[JY60_MAX_SIZE];
-uint8_t Data_JY60[JY60_Data_Size];
+uint8_t *DMARecieveBuffer_JY60 = 0x24040040;
+uint8_t *Data_JY60 = 0x24040040 + JY60_MAX_SIZE;
 
 typedef struct acce
 {
