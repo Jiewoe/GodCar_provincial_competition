@@ -13,6 +13,8 @@
         "main.h": "c",
         "servodriver.h": "c",
         "display.h": "c",
-        "esp8266.h": "c"
+        "esp8266.h": "c",
+        "jy60.h": "c",
+        "stm32h7xx_hal.h": "c"
     }
 }

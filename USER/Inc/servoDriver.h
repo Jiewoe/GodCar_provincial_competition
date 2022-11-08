@@ -11,18 +11,22 @@
 /*
 
     舵机时基脉冲 20ms
-    角度对应比例
+    角度对应比例(180度舵机为例)
     0.5ms--------------0度；
     1.0ms------------45度；
     1.5ms------------90度；
     2.0ms-----------135度；
     2.5ms-----------180度；
 
+
     定义最大角度对应占空比比例
+    0.1 = 2/20
+    0.025 = 0.5/20
 
 */
 #define ANGLE_180   0.1
 #define ANGLE_270   0.1
+#define ANGLE_0     0.025
 
 /*
 
@@ -37,6 +41,7 @@
 #define CARGO_FULL_ANGLE    ((TIM5_ARR)*(ANGLE_180))
 #define HOLDER_FULL_ANGLE   ((TIM14_ARR)*(ANGLE_270))
 #define ARM_FULL_ANGLE      ((TIM12_ARR)*(ANGLE_180))
+#define ZERO_ANGLE          ((uint16_t)((TIM12_ARR)*(ANGLE_0)))         //这里只用tim12的计数最大值定义了,计数区间不出意外的话应该都是一样的
 
 
 /*

@@ -5,7 +5,7 @@
     定义全局变量记录舵机当前角度
 
     载物台舵机1，2，3 同步转动
-    机械臂舵机6，7    同步转动
+    机械臂舵机6，7    分别转动
 
 */
 
@@ -76,7 +76,7 @@ void HolderControl(uint16_t angle)
 {
     if(angle<=270)
     {
-        Servo5_Angle = (uint32_t)((angle*1.0/270.0)*HOLDER_FULL_ANGLE)+500;
+        Servo5_Angle = (uint32_t)((angle*1.0/270.0)*HOLDER_FULL_ANGLE)+ZERO_ANGLE;
         NowAngle_Holder = angle;
     }
     else
@@ -87,7 +87,7 @@ void PawControl(uint8_t angle)
 {
     if(angle<=180)
     {
-        Servo4_Angle = (uint32_t)((angle*1.0/180.0)*PAW_FULL_ANGLE)+500;
+        Servo4_Angle = (uint32_t)((angle*1.0/180.0)*PAW_FULL_ANGLE)+ZERO_ANGLE;
         NowAngle_Paw = angle;
     }
     else
@@ -95,18 +95,17 @@ void PawControl(uint8_t angle)
 }
 
 
-//未改
 void ArmControl(uint8_t LeftAngle, uint8_t RightAngle)
 {
     if(LeftAngle<=180)
     {
-        Servo6_Angle = (uint32_t)((LeftAngle*1.0/180.0)*ARM_FULL_ANGLE);
+        Servo6_Angle = (uint32_t)((LeftAngle*1.0/180.0)*ARM_FULL_ANGLE)+ZERO_ANGLE;
 
         NowAngle_LeftArm = LeftAngle;
     }
     if (RightAngle<=180)
     {
-        Servo7_Angle = (uint32_t)((RightAngle*1.0/180.0)*ARM_FULL_ANGLE);
+        Servo7_Angle = (uint32_t)((RightAngle*1.0/180.0)*ARM_FULL_ANGLE)+ZERO_ANGLE;
 
         NowAngle_RightArm = RightAngle;
     }
@@ -118,7 +117,7 @@ void CargoControl(uint8_t angle)
 {
     if(angle<=180)
     {
-        uint32_t cargoAjustAngle = (uint32_t)((angle*1.0/180.0)*CARGO_FULL_ANGLE);
+        uint32_t cargoAjustAngle = (uint32_t)((angle*1.0/180.0)*CARGO_FULL_ANGLE)+ZERO_ANGLE;
 
         Servo1_Angle = cargoAjustAngle;
         Servo2_Angle = cargoAjustAngle;

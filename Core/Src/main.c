@@ -35,8 +35,9 @@
 #include "sys.h"
 #include "motor.h"
 #include "ov5640test.h"
-#include "JY60.h"
 #include "Display.h"
+#include "esp8266.h"
+#include "JY60.h"
 
 /* USER CODE END Includes */
 
@@ -226,7 +227,7 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
-//系统定时器中�?????
+//系统定时器中�?????
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     /* Prevent unused argument(s) compilation warning */
@@ -261,7 +262,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
             // Lateral_correction();
         }
 
-        //写完成条�?????
+        //写完成条�?????
         if (IF_MOVE == 0)
         {
             procedure++;
@@ -287,6 +288,8 @@ void USAR_UART_IDLECallback(UART_HandleTypeDef *huart)
         DisPlay_Porcess (Display_Buffer);
         HAL_UART_Receive_DMA (&huart4, Display_Buffer, 64);
     }
+    WifiProcess (huart);
+    JY60Process (huart);
 }
 
 
