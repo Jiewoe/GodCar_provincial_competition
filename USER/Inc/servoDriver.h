@@ -10,6 +10,14 @@
 
 /*
 
+    载物台是否开启状态
+
+*/
+#define CARGO_SET   1
+#define CARGO_UNSET 0
+
+/*
+
     舵机时基脉冲 20ms
     角度对应比例(180度舵机为例)
     0.5ms--------------0度；
@@ -76,12 +84,14 @@ extern uint8_t NowAngle_LeftArm;
 extern uint8_t NowAngle_RightArm;
 extern uint16_t NowAngle_Holder;
 
-void InitServo(void);
-void InitServoTest(uint8_t CargoAngle, uint8_t PawAngle, uint16_t HolderAngle, uint8_t LeftArmAngle, uint8_t RightArmAngle);
+void Servo_Init(void);
+void InitServoAngle(uint8_t CargoAngle, uint8_t PawAngle, uint16_t HolderAngle, uint8_t LeftArmAngle, uint8_t RightArmAngle);
 void HolderControl(uint16_t angle);
 void PawControl(uint8_t angle);
-void ArmControl(uint8_t LeftAngle, uint8_t RightAngle);
+void LeftArmControl (uint8_t LeftAngle);
+void RightArmControl (uint8_t RightAngle);
 void CargoControl(uint8_t angle);
 void Servo_Init(void);
+void CargoSet(uint8_t SetStatus);
 
 #endif
