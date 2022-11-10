@@ -619,6 +619,11 @@
               <FileType>1</FileType>
               <FilePath>..\USER\Src\Display.c</FilePath>
             </File>
+            <File>
+              <FileName>ov5640test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\Src\ov5640test.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

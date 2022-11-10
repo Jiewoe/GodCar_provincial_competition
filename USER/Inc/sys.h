@@ -35,8 +35,8 @@ extern uint8_t target;
     Camera_Buffer 0x24000000
     Usart_Buffer 0x24000000 + Display_Width*Display_Height
     Display_Buffer = 0x24000000+0x40000; 宽度64
-    uint8_t *DMARecieveBuffer_JY60 = 0x24040040; 宽度53
-    uint8_t *Data_JY60 = 0x24040040 + JY60_MAX_SIZE; 宽度33
+    uint8_t *DMARecieveBuffer_JY60 = 0x24040040; 宽度11
+
     
 
 */

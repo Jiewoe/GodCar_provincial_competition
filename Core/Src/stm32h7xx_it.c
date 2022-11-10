@@ -380,14 +380,7 @@ void UART4_IRQHandler(void)
   /* USER CODE END UART4_IRQn 0 */
   HAL_UART_IRQHandler(&huart4);
   /* USER CODE BEGIN UART4_IRQn 1 */
-
-    if (RESET != __HAL_UART_GET_FLAG(&huart4, UART_FLAG_IDLE)) //判断idle标志被置�??
-    {
-        __HAL_UART_CLEAR_IDLEFLAG(&huart4); //清除标志�??
-        HAL_UART_DMAStop(&huart4);          //  停止DMA传输
-        USAR_UART_IDLECallback(&huart4);
-    }
-
+    USAR_UART_IDLECallback(&huart4);
   /* USER CODE END UART4_IRQn 1 */
 }
 
@@ -398,11 +391,12 @@ void UART5_IRQHandler(void)
 {
   /* USER CODE BEGIN UART5_IRQn 0 */
     
-    USAR_UART_IDLECallback(&huart5);
+
 
   /* USER CODE END UART5_IRQn 0 */
   HAL_UART_IRQHandler(&huart5);
   /* USER CODE BEGIN UART5_IRQn 1 */
+    USAR_UART_IDLECallback(&huart5);
 
   /* USER CODE END UART5_IRQn 1 */
 }
@@ -442,12 +436,12 @@ void USART6_IRQHandler(void)
 {
   /* USER CODE BEGIN USART6_IRQn 0 */
 
-    USAR_UART_IDLECallback(&huart6);
+
 
   /* USER CODE END USART6_IRQn 0 */
   HAL_UART_IRQHandler(&huart6);
   /* USER CODE BEGIN USART6_IRQn 1 */
-
+    USAR_UART_IDLECallback(&huart6);
   /* USER CODE END USART6_IRQn 1 */
 }
 
@@ -472,12 +466,12 @@ void UART8_IRQHandler(void)
 {
   /* USER CODE BEGIN UART8_IRQn 0 */
 
-    USAR_UART_IDLECallback(&huart8);
+
     
   /* USER CODE END UART8_IRQn 0 */
   HAL_UART_IRQHandler(&huart8);
   /* USER CODE BEGIN UART8_IRQn 1 */
-
+    USAR_UART_IDLECallback(&huart8);
   /* USER CODE END UART8_IRQn 1 */
 }
 

@@ -169,10 +169,10 @@ void WifiProcess(UART_HandleTypeDef *huart)
 {
     if (huart->Instance == USART6)
     {
-        if (RESET != __HAL_UART_GET_FLAG(&huart6, UART_FLAG_IDLE))
-        {
-            __HAL_UART_CLEAR_IDLEFLAG(&huart6);
-            HAL_UART_DMAStop(&huart6);
+        // if (RESET != __HAL_UART_GET_FLAG(&huart6, UART_FLAG_IDLE))
+        //{
+            // __HAL_UART_CLEAR_IDLEFLAG(&huart6);
+            // HAL_UART_DMAStop(&huart6);
 
             uint32_t temp = __HAL_DMA_GET_COUNTER(&huart6);
             WifiDataLen = BUFFERSIZE - temp;
@@ -188,14 +188,14 @@ void WifiProcess(UART_HandleTypeDef *huart)
 
             WifiDataLen = 0;
             HAL_UART_Receive_DMA(&huart6, DMARecieveBuffer_Wifi, BUFFERSIZE);
-        }
+        //}
     }
     if (huart->Instance == UART8)
     {
-        if (__HAL_UART_GET_FLAG(&huart8, UART_FLAG_IDLE) != RESET)
-        {
-            __HAL_UART_CLEAR_IDLEFLAG(&huart8);
-            HAL_UART_DMAStop(&huart8);
+        // if (__HAL_UART_GET_FLAG(&huart8, UART_FLAG_IDLE) != RESET)
+        // {
+            // __HAL_UART_CLEAR_IDLEFLAG(&huart8);
+            // HAL_UART_DMAStop(&huart8);
 
             uint32_t temp = __HAL_DMA_GET_COUNTER(&huart8);
             Testdatalen = BUFFERSIZE/8 - temp;
@@ -204,7 +204,7 @@ void WifiProcess(UART_HandleTypeDef *huart)
             Testdatalen = 0;
 
             HAL_UART_Receive_DMA(&huart8, DMARecieveBuffer_Test, BUFFERSIZE/8);
-        }
+        //}
     }
 }
 
