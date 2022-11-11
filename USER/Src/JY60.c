@@ -29,19 +29,23 @@ void JY60Init (UART_HandleTypeDef *huartx) //Int
     HAL_UART_Transmit(huartx, cmd1, 3, 0xffff);//串口
     cmd1[0] = 0xff;
     cmd1[1] = 0xaa;
-    cmd1[2] = 0x66;
+    cmd1[2] = 0x65;
     HAL_UART_Transmit(huartx, cmd1, 3, 0xffff);//水平安装
 }
 
 
 //一条数据11位
-int JY60_Message_Pross (uint8_t *buffer, ACCE *acce, ANGV *angv, ANG *ang)
+void JY60_Message_Pross (uint8_t *buffer, ACCE *acce, ANGV *angv, ANG *ang)
 {
-    while (buffer<DMARecieveBuffer_JY60+40)
+    while (1)
     {
-        if (buffer[0]!= 0x55)
+        while (buffer[0]!= 0x55)
         {
             buffer++;
+            if (buffer>DMARecieveBuffer_JY60+38)
+            {
+                return;
+            }
         }
         float g=9.8;
         if (buffer [1] == 0x51)
@@ -62,7 +66,6 @@ int JY60_Message_Pross (uint8_t *buffer, ACCE *acce, ANGV *angv, ANG *ang)
             ang->Roll  = (float)(((short)buffer[5]<<8)|buffer[4])/32768*180;
             ang->Yaw   = (float)(((short)buffer[7]<<8)|buffer[6])/32768*180;
         }
-        return 0;
         buffer = buffer + 11;
     }
 }
@@ -75,7 +78,7 @@ int JY60_Message_Pross (uint8_t *buffer, ACCE *acce, ANGV *angv, ANG *ang)
 void JY60DMAInit(void)
 {
     //__HAL_UART_CLEAR_IDLEFLAG(&huart5);
-    HAL_UART_Receive_DMA (&huart5, DMARecieveBuffer_JY60, 55);
+    HAL_UART_Receive_DMA (&huart5, DMARecieveBuffer_JY60, 38);
  
     //__HAL_UART_ENABLE_IT (&huart5, UART_IT_IDLE);
 }

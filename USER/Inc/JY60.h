@@ -31,7 +31,7 @@ extern  ANGV angv1;
 extern  ANG ang1;
 
 void JY60Init (UART_HandleTypeDef *huartx);
-int  JY60_Message_Pross (uint8_t *buffer, ACCE *acce, ANGV *angv, ANG *ang);
+void  JY60_Message_Pross (uint8_t *buffer, ACCE *acce, ANGV *angv, ANG *ang);
 void JY60DMAInit(void);
 
 #endif

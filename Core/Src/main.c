@@ -276,7 +276,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
         if (huart == &huart5)
         {
-            printf ("%f\n", ang1.Yaw);
+            printf ("%f\n%f\n%f\n\n", ang1.Pitch,ang1.Roll, ang1.Yaw);
             JY60_Message_Pross(DMARecieveBuffer_JY60, &acce1, &angv1, &ang1);
             //HAL_UART_Receive_DMA(&huart5, DMARecieveBuffer_JY60, 11);
         }
