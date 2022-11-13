@@ -136,15 +136,15 @@ int main(void)
   MX_USART6_UART_Init();
   MX_UART4_Init();
   /* USER CODE BEGIN 2 */
-    
+
     // Motor_Init();
-    // testInit  ();
+    testInit  ();
     Servo_Init();
     DisPlay_Init();
 
-    //JY60Init (&huart5);
-    //JY60DMAInit ();
-    HAL_UART_Receive_IT (&huart5, DMARecieveBuffer_JY60, JY60_MAX_SIZE);
+    JY60Init (&huart5);
+                //HAL_UART_Receive_IT(&huart5, DMARecieveBuffer_JY60, 11);
+    // JY60DMAInit ();
 
   /* USER CODE END 2 */
 
@@ -152,6 +152,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
     while (1)
     {
+
         // testFunc ();
     }
 
@@ -227,7 +228,7 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
-//系统定时器中�?????
+//系统定时器中�???????
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     /* Prevent unused argument(s) compilation warning */
@@ -236,24 +237,25 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     /* NOTE : This function should not be modified, when the callback is needed,
               the HAL_TIM_PeriodElapsedCallback could be implemented in the user file
      */
-    if (htim->Instance == htim2.Instance)
+    if (htim == &htim2)
     {
         round1++;
     }
-    if (htim->Instance == htim3.Instance)
+    if (htim == &htim3)
     {
         round2++;
     }
-    if (htim->Instance == htim4.Instance)
+    if (htim == &htim4)
     {
         round3++;
     }
-    if (htim->Instance == htim8.Instance)
+    if (htim == &htim8)
     {
         round4++;
     }
-    if (htim->Instance == htim6.Instance)
+    if (htim == &htim6)
     {
+        //printf ("%f", ang1.Yaw);
         if (IF_MOVE == 1)
         {
             Move_Forward();
@@ -262,7 +264,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
             // Lateral_correction();
         }
 
-        //写完成条�?????
+        //写完成条�???????
         if (IF_MOVE == 0)
         {
             procedure++;
@@ -272,27 +274,36 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-    if (huart->Instance == UART5)
-    {
-        HAL_UART_Transmit (&huart8, DMARecieveBuffer_JY60, JY60_MAX_SIZE, 0xffff);
-        HAL_UART_Receive_IT (&huart5, DMARecieveBuffer_JY60, JY60_MAX_SIZE);
-    }
+        if (huart == &huart5)
+        {
+            printf ("%f\n%f\n%f\n\n", ang1.Pitch,ang1.Roll, ang1.Yaw);
+            JY60_Message_Pross(DMARecieveBuffer_JY60, &acce1, &angv1, &ang1);
+            //HAL_UART_Receive_DMA(&huart5, DMARecieveBuffer_JY60, 11);
+        }
 }
-
 
 //空闲中断处理函数
 void USAR_UART_IDLECallback(UART_HandleTypeDef *huart)
 {
-    if (huart == &huart4)
+    if (RESET != __HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE)) //判断idle标志被置�???
     {
-        DisPlay_Porcess (Display_Buffer);
-        HAL_UART_Receive_DMA (&huart4, Display_Buffer, 64);
+        __HAL_UART_CLEAR_IDLEFLAG(huart); //清除标志
+        HAL_UART_DMAStop(huart);         // 停止DMA传输
+        //处理中断标志�?
+
+        if (huart == &huart4)
+        {
+            DisPlay_Porcess(Display_Buffer);
+            HAL_UART_Receive_DMA(&huart4, Display_Buffer, 64);
+        }
+//        if (huart == &huart5)
+//        {
+//            JY60_Message_Pross(DMARecieveBuffer_JY60, &acce1, &angv1, &ang1);
+//            HAL_UART_Receive_DMA(&huart5, DMARecieveBuffer_JY60, 15);
+//        }
+        WifiProcess(huart);
     }
-    WifiProcess (huart);
-    JY60Process (huart);
 }
-
-
 
 /* USER CODE END 4 */
 

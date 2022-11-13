@@ -3,18 +3,35 @@
 
 #include "usart.h"
 
-#define JY60_MAX_SIZE 53
-#define JY60_Data_Size 33
+extern uint8_t *DMARecieveBuffer_JY60;
 
+typedef struct
+{
+    float Gx;
+    float Gy;
+    float Gz;
+} ACCE;
 
+typedef struct
+{
+    float ANGVx;
+    float ANGVy;
+    float ANGVz;
+} ANGV;
 
-extern uint8_t DMARecieveBuffer_JY60[JY60_MAX_SIZE];
-extern uint8_t Data_JY60[JY60_Data_Size];
+typedef struct
+{
+    float Pitch;
+    float Roll;
+    float Yaw;
+} ANG;
+
+extern  ACCE acce1;
+extern  ANGV angv1;
+extern  ANG ang1;
 
 void JY60Init (UART_HandleTypeDef *huartx);
-// int  JY60_Message_Pross (uint8_t *buffer, ACCE *acce, ANGV *angv, ANG *ang);
+void  JY60_Message_Pross (uint8_t *buffer, ACCE *acce, ANGV *angv, ANG *ang);
 void JY60DMAInit(void);
-void refineData(void);
-void JY60Process(UART_HandleTypeDef *huart);
 
 #endif

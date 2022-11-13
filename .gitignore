@@ -6,5 +6,5 @@ Drivers/*.a
 Drivers/*.s
 Drivers/*.icf
 Drivers/*.o
+MDK-ARM/.vscode/
 MDK-ARM/.vscode/c_cpp_properties.json
-MDK-ARM/.vscode/keil-assistant.log
