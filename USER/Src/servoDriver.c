@@ -32,8 +32,10 @@ void InitServoAngle(uint8_t CargoAngle, uint8_t PawAngle, uint16_t HolderAngle, 
     PawControl (PawAngle);
     LeftArmControl (LeftArmAngle);
     RightArmControl(RightArmAngle);
-    CargoControl  (CargoAngle);
     HolderControl (HolderAngle);
+    
+    //载物台初始化没写进去，载物台角度多少为打开，多少为关闭
+    //CargoSet(CARGO_1, CARGO_UNSET);
 
 }
 
