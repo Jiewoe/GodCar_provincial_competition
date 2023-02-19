@@ -2,7 +2,7 @@ MDK-ARM/GODCARII/*
 MDK-ARM/*.a
 MDK-ARM/*.icf
 Drivers/*.a
-Drivers/*.s
+
 Drivers/*.icf
 Drivers/*.o
 MDK-ARM/.vscode/*
