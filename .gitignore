@@ -1,6 +1,5 @@
 MDK-ARM/GODCARII/*
 MDK-ARM/*.a
-MDK-ARM/*.s
 MDK-ARM/*.icf
 Drivers/*.a
 Drivers/*.s
