@@ -8,7 +8,11 @@ uint8_t round4 = 0;
 
 //单位厘米
 uint8_t target = 0;
+
+//状态控制
 uint8_t procedure = 0;
+
+//是否移动
 uint8_t IF_MOVE = 0;
 
 //============初始化轮子============
