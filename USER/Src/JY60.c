@@ -1,6 +1,6 @@
 #include "JY60.h"
 
-uint8_t *DMARecieveBuffer_JY60 = 0x24040040;
+uint8_t *DMARecieveBuffer_JY60 = (uint8_t *)0x24040040;
 
 ACCE acce1;
 ANGV angv1;

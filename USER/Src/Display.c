@@ -3,7 +3,7 @@
 // dma配置与空闲中断在主函数里面
 
 
-uint8_t *Display_Buffer = 0x24000000+0x40000;
+uint8_t *Display_Buffer = (uint8_t *)0x24000000+0x40000;
 
 void DisPlay_Init()
 {
