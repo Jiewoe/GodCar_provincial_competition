@@ -63,6 +63,12 @@ extern uint8_t IF_MOVE;
 #define Motor3_Speed (TIM1->CCR3)
 #define Motor4_Speed (TIM1->CCR4)
 
+#define Motor_GPIO GPIOG
+
+
+
+
+
 #define Motor1_CNT ((&htim2)->Instance->CNT)
 #define Motor2_CNT ((&htim3)->Instance->CNT)
 #define Motor3_CNT ((&htim4)->Instance->CNT)

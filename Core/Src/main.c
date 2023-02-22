@@ -153,10 +153,12 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  target = 1000;
+  
     while (1)
     {
-
-         testFunc ();
+        Move_Forward();
+         //testFunc ();
     }
 
     /* USER CODE END WHILE */
@@ -231,7 +233,7 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
-//系统定时器中�???????
+//系统定时器中�????????
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     /* Prevent unused argument(s) compilation warning */
@@ -267,7 +269,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     //         // Lateral_correction();
     //     }
 
-    //     //写完成条�???????
+    //     //写完成条�????????
     //     if (IF_MOVE == 0)
     //     {
     //         procedure++;
@@ -288,11 +290,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 //空闲中断处理函数
 void USAR_UART_IDLECallback(UART_HandleTypeDef *huart)
 {
-    if (RESET != __HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE)) //判断idle标志被置�???
+    if (RESET != __HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE)) //判断idle标志被置�????
     {
         __HAL_UART_CLEAR_IDLEFLAG(huart); //清除标志
         HAL_UART_DMAStop(huart);         // 停止DMA传输
-        //处理中断标志�?
+        //处理中断标志�??
 
         if (huart == &huart4)
         {

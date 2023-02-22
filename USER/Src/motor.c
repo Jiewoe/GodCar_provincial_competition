@@ -35,26 +35,28 @@ void Motor_Init()
 
 void Move_Forward ()
 {
-    short Piancha = target - ((float)(round1 + round3)/2 + (float)(Motor1_CNT + Motor3_CNT)/120000)*3.14159*6;
+    short Piancha = target - ((float)(round2 + round4)/2 + (float)(Motor2_CNT + Motor4_CNT)/120000)*3.14159*6;
     //=====完成操作=======
     if (Piancha < 2)
     {
         target = 0;
         IF_MOVE = 0;
-        Motor1_Speed = Motor3_Speed = 0; //停车
+        Motor2_Speed = Motor4_Speed = 0; //停车
+        Motor2_CNT = Motor4_CNT = 0;
+        round2 = round4 = 0;
         return;
     }
     //======进行线性启动=======
     //最低速度为500 
     if (target-Piancha < 10)
     {
-        Motor3_Speed = Motor1_Speed = max (500, (target - Piancha)*100);//在这里调整最大速度
+        Motor2_Speed = Motor4_Speed = max (500, (target - Piancha)*100);//在这里调整最大速度
         return;
     }
     //======进行线性停止=======
     if (Piancha < 10)
     {
-        Motor3_Speed = Motor1_Speed = max (500, (Piancha)*100);
+        Motor2_Speed = Motor4_Speed = max (500, (Piancha)*100);
         return;
     }
 
