@@ -40,6 +40,7 @@
 #define ANGLE_180   0.1
 #define ANGLE_270   0.1
 #define ANGLE_0     0.025
+#define ANGLE_45    0.04
 
 /*
 
@@ -51,7 +52,7 @@
 
 */
 #define PAW_FULL_ANGLE      ((TIM5_ARR)*(ANGLE_180))
-#define CARGO_FULL_ANGLE    ((TIM5_ARR)*(ANGLE_180))
+#define CARGO_FULL_ANGLE    ((TIM5_ARR)*(ANGLE_45))
 #define HOLDER_FULL_ANGLE   ((TIM14_ARR)*(ANGLE_270))
 #define ARM_FULL_ANGLE      ((TIM12_ARR)*(ANGLE_180))
 #define ZERO_ANGLE          ((uint16_t)((TIM12_ARR)*(ANGLE_0)))         //这里只用tim12的计数最大值定义了,计数区间不出意外的话应该都是一样的

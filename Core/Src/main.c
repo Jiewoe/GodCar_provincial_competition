@@ -138,11 +138,14 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
     // Motor_Init();
+    //
+    
     testInit  ();
+    
     Servo_Init();
     DisPlay_Init();
 
-    JY60Init (&huart5);
+    //JY60Init (&huart5);
                 //HAL_UART_Receive_IT(&huart5, DMARecieveBuffer_JY60, 11);
     // JY60DMAInit ();
 
@@ -153,7 +156,7 @@ int main(void)
     while (1)
     {
 
-        // testFunc ();
+         testFunc ();
     }
 
     /* USER CODE END WHILE */
@@ -228,7 +231,7 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
-//系统定时器中�???????
+//系统定时器中�???????
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     /* Prevent unused argument(s) compilation warning */
@@ -253,23 +256,23 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     {
         round4++;
     }
-    if (htim == &htim6)
-    {
-        //printf ("%f", ang1.Yaw);
-        if (IF_MOVE == 1)
-        {
-            Move_Forward();
+    // if (htim == &htim6)
+    // {
+    //     //printf ("%f", ang1.Yaw);
+    //     if (IF_MOVE == 1)
+    //     {
+    //         Move_Forward();
 
-            //这里要改
-            // Lateral_correction();
-        }
+    //         //这里要改
+    //         // Lateral_correction();
+    //     }
 
-        //写完成条�???????
-        if (IF_MOVE == 0)
-        {
-            procedure++;
-        }
-    }
+    //     //写完成条�???????
+    //     if (IF_MOVE == 0)
+    //     {
+    //         procedure++;
+    //     }
+    // }
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
@@ -285,11 +288,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 //空闲中断处理函数
 void USAR_UART_IDLECallback(UART_HandleTypeDef *huart)
 {
-    if (RESET != __HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE)) //判断idle标志被置�???
+    if (RESET != __HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE)) //判断idle标志被置�???
     {
         __HAL_UART_CLEAR_IDLEFLAG(huart); //清除标志
         HAL_UART_DMAStop(huart);         // 停止DMA传输
-        //处理中断标志�?
+        //处理中断标志�?
 
         if (huart == &huart4)
         {
@@ -301,7 +304,7 @@ void USAR_UART_IDLECallback(UART_HandleTypeDef *huart)
 //            JY60_Message_Pross(DMARecieveBuffer_JY60, &acce1, &angv1, &ang1);
 //            HAL_UART_Receive_DMA(&huart5, DMARecieveBuffer_JY60, 15);
 //        }
-        WifiProcess(huart);
+//        WifiProcess(huart);
     }
 }
 

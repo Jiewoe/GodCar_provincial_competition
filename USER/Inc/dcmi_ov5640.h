@@ -3,6 +3,7 @@
 
 #include "stm32h7xx_hal.h"
 #include "sccb.h"
+#include <stdio.h>
 
 // DCMI状态标志，当数据帧传输完成时，会被 HAL_DCMI_FrameEventCallback() 中断回调函数置 1
 extern volatile uint8_t OV5640_FrameState; // 声明变量，方便其它文件进行调用

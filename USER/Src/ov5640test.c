@@ -10,8 +10,8 @@ void testInit(void)
     OV5640_Set_Horizontal_Mirror(OV5640_Enable);
     OV5640_Set_Pixformat(Pixformat_GRAY);
 
-    ov5640.BufferAddress = Camera_Buffer;
-    ov5640.Cam_Result = Usart_Buffer;
+    ov5640.BufferAddress = (uint8_t *)Camera_Buffer;
+    ov5640.Cam_Result = (uint8_t *)Usart_Buffer;
     ov5640.CamWide = Display_Width;
     ov5640.CanHigh = Display_Height;
 

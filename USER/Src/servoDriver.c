@@ -142,7 +142,7 @@ void CargoSet(uint8_t Cargo_pos, uint8_t SetStatus)
             {
                 if (SetStatus == CARGO_SET)
                 {
-                    Servo1_Angle = (uint32_t)(CARGO_FULL_ANGLE+ZERO_ANGLE);
+                    Servo1_Angle = (uint32_t)(CARGO_FULL_ANGLE+ZERO_ANGLE-50);
                     CargoStatus_1 = SetStatus;
                 }
                 else if (SetStatus == CARGO_UNSET)
@@ -180,7 +180,7 @@ void CargoSet(uint8_t Cargo_pos, uint8_t SetStatus)
             {
                 if (SetStatus == CARGO_SET)
                 {
-                    Servo3_Angle = (uint32_t)(CARGO_FULL_ANGLE+ZERO_ANGLE);
+                    Servo3_Angle = (uint32_t)(CARGO_FULL_ANGLE+ZERO_ANGLE-50);
                     CargoStatus_3 = SetStatus;
                 }
                 else if (SetStatus == CARGO_UNSET)

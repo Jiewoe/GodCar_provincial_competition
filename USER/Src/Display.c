@@ -3,7 +3,7 @@
 // dma配置与空闲中断在主函数里面
 
 
-uint8_t *Display_Buffer = 0x24000000+0x40000;
+uint8_t *Display_Buffer = (uint8_t *)0x24000000+0x40000;
 
 void DisPlay_Init()
 {
@@ -18,7 +18,7 @@ void DisPlay_Porcess(uint8_t *buffer)
     {
         return;
     }
-    if (buffer[1]==0xB1&&buffer[2]==0x11)//滑块指令
+    if (buffer[1]==0xB1&&buffer[2]==0x11)//滑块指令与按钮指令
     {
         if (buffer[4]==0x00)//0号屏幕
         {
@@ -27,6 +27,17 @@ void DisPlay_Porcess(uint8_t *buffer)
                 HolderControl((uint16_t)(buffer[10]*256+buffer[11]));
             }
         }
+        if (buffer[4]==0x01)
+        {
+            uint8_t set = 1;
+            if (buffer[6]>3)
+            {
+                set = 0;
+                buffer[6]=buffer[6]-3;
+            }
+            CargoSet(buffer[6], set);
+        }
     }
+
 }
 
