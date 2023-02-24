@@ -150,14 +150,14 @@ int main(void)
     // JY60DMAInit ();
 
   /* USER CODE END 2 */
-
+    Move_left();
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   target = 200;
   
     while (1)
     {
-        Move_Forward();
+        //Move_Forward();
         //testFunc ();
     }
 

@@ -60,16 +60,16 @@ void Move_Forward ()
     //最低速度为500 
     if (target-Piancha < 10)
     {
-        Motor2_Speed = Motor4_Speed = max (800, (target - Piancha)*180);//在这里调整最大速度
+        Motor2_Speed = Motor4_Speed = max (800, (target - Piancha)*200);//在这里调整最大速度
         return;
     }
     //======进行线性停止=======
     if (Piancha < 10)
     {
-        Motor2_Speed = Motor4_Speed = max (500, (Piancha)*100);
+        Motor2_Speed = Motor4_Speed = max (500, (Piancha)*200);
         return;
     }
-
+}
     
     //else if (Piancha < 30)
     // {
@@ -87,7 +87,7 @@ void Move_Forward ()
     //     Motor1_Speed = Motor3_Speed = 3000;
     //     return;
     // }
-}
+
 
 
 void Lateral_correction (short piancha)
@@ -105,6 +105,18 @@ void Lateral_correction (short piancha)
         //调整车轮速度
         return;
     }
+    Motor1_Speed = Motor2_Speed = 0;
+}
+
+//向左转弯
+void Move_left()
+{
+    HAL_GPIO_WritePin (Motor_GPIO, Motor2_Pin|Motor2_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin (Motor_GPIO, Motor3_Pin|Motor4_Pin, GPIO_PIN_SET);
+    Motor2_Speed = Motor1_Speed = 1500;
+    Motor4_Speed = Motor3_Speed = 6000-1500;
+    HAL_Delay (1000);
+    Motor_Init();
 }
 
 
