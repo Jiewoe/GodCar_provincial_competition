@@ -42,6 +42,7 @@ short CannyEdgeTest(CamStruct *ov5640, uint8_t lowThr)
     A = (float(*)[wideth])(ov5640->BufferAddress + wideth * height * 2);
 
     memcpy((uint8_t *)org, (uint8_t *)ov5640->BufferAddress, wideth * height);
+    
 
     uint8_t(*Sector)[wideth]; //像素梯度所在扇区
     Sector = (uint8_t(*)[wideth])(ov5640->BufferAddress + wideth * height * 6);
