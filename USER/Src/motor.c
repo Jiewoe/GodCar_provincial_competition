@@ -15,6 +15,7 @@ uint8_t procedure = 0;
 //是否移动
 uint8_t IF_MOVE = 0;
 
+//motor2 60000-x
 //============初始化轮子============
 void Motor_Init()
 {
@@ -26,8 +27,14 @@ void Motor_Init()
     HAL_TIM_Encoder_Start (&htim2, TIM_CHANNEL_ALL);
     HAL_TIM_Encoder_Start (&htim3, TIM_CHANNEL_ALL);
     HAL_TIM_Encoder_Start (&htim4, TIM_CHANNEL_ALL);
+    HAL_TIM_Base_Start_IT (&htim2);
+    HAL_TIM_Base_Start_IT (&htim3);
+    HAL_TIM_Base_Start_IT (&htim4);
+    HAL_TIM_Base_Start_IT (&htim8);
     round1 = round2 = round3 = round4 = 0;
-    Motor1_CNT = Motor2_CNT = Motor3_CNT = Motor4_CNT = 0;
+    Motor1_CNT = Motor2_CNT = Motor3_CNT = Motor4_CNT = 5000;
+    Motor1_Speed = Motor2_Speed = Motor3_Speed = Motor4_Speed = 0;
+    HAL_GPIO_WritePin (Motor_GPIO, Motor1_Pin|Motor2_Pin|Motor3_Pin|Motor4_Pin, GPIO_PIN_RESET);
 }
 
 
@@ -35,7 +42,10 @@ void Motor_Init()
 
 void Move_Forward ()
 {
-    short Piancha = target - ((float)(round2 + round4)/2 + (float)(Motor2_CNT + Motor4_CNT)/120000)*3.14159*6;
+    int Piancha = target - (double)(((float)(round2 + round4)/2 + (float)(Motor2_CNT + Motor4_CNT)/120000)*3.14*6);
+    printf("偏差是%d\n", Piancha);
+    printf("CNT:%d", Motor2_CNT);
+    printf("round:%d", round2);
     //=====完成操作=======
     if (Piancha < 2)
     {
@@ -50,7 +60,7 @@ void Move_Forward ()
     //最低速度为500 
     if (target-Piancha < 10)
     {
-        Motor2_Speed = Motor4_Speed = max (500, (target - Piancha)*100);//在这里调整最大速度
+        Motor2_Speed = Motor4_Speed = max (800, (target - Piancha)*180);//在这里调整最大速度
         return;
     }
     //======进行线性停止=======

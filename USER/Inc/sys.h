@@ -64,7 +64,10 @@ extern uint8_t IF_MOVE;
 #define Motor4_Speed (TIM1->CCR4)
 
 #define Motor_GPIO GPIOG
-
+#define Motor1_Pin GPIO_PIN_2
+#define Motor2_Pin GPIO_PIN_3
+#define Motor3_Pin GPIO_PIN_4
+#define Motor4_Pin GPIO_PIN_5
 
 
 
