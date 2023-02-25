@@ -141,17 +141,28 @@ short CannyEdgeTest(CamStruct *ov5640, uint8_t lowThr)
         }
     }
 
-    //==========中心线计算============
-    uint8_t *center;
+
+//==========中心线计算============
+
+/*
+    center数组存放了中心点的位置（x坐标）
+
+    y_0   为有用数值开始处的y坐标
+
+    piaCnt 偏差累计变量，累计三个坐标产生大值偏移停止扫描
+
+*/
+    uint8_t *center, flag=1, y_0, piaCnt=0;
     center = (ov5640->BufferAddress + wideth * height * 2);
-    center[0] = wideth/2;
+
+    center[(short)(height*0.7)] = wideth/2;
 
     double k, b;
     int sum1 = 0, sum2 = 0, sum3 = 0, sum4=0;
 
-    for (y = 1; y < height; y++)
+    for (y = (short)(height*0.7)-1; y >= 0; y--)          //自顶向下扫描（这里的顶是指y值最大的边界，即图片下边缘）
     {
-        for (x = center[y-1]; x < wideth - 20; x++)
+        for (x = center[y+1]; x < wideth - 20; x++)
         {
             if (org[y][x] > 0xe0)
             {
@@ -159,7 +170,7 @@ short CannyEdgeTest(CamStruct *ov5640, uint8_t lowThr)
                 break;
             }
         }
-        for (x = center[y-1]; x > 20; x--)
+        for (x = center[y+1]; x > 20; x--)
         {
             if (org[y][x] > 0xe0)
             {
@@ -169,36 +180,57 @@ short CannyEdgeTest(CamStruct *ov5640, uint8_t lowThr)
         }
         center[y] = (Xg + Yg) / 2;
 
-        sum1 += y*center[y];
-        sum2 += y*y;
-        sum3 += center[y];
-        sum4 += y;
+        if (fabs(center[y]-center[y-1])>20 && flag == 1)    //flag=1 y_0没有值，flag=0 y_0有值
+        {
+            y_0 = y;
+        }
+
+        if (fabs(center[y]-center[y_0]) > 20)
+        {
+            flag = 0;
+            piaCnt ++;
+
+            if (piaCnt > 2)
+            {
+                break;
+            }
+        }
+        else
+        {
+            piaCnt = 0;
+            flag = 1;
+        }
+
+        sum1 += y*center[y];    //x*y和
+        sum2 += y*y;            //y^2和
+        sum3 += center[y];      //x值坐标和
+        sum4 += y;              //y值坐标和
     }
 
     //========中心散点显示========（可去除）
-    for (y = 1; y < height; y++)
+    for (y = (short)(height*0.7)-1; y >= y_0; y--)
     {
         org[y][center[y]] = 0xf0;
     }
 
     //========最小二乘法计算========
 
-    k = (sum1*1.0-(sum3*sum4*1.0)/(height-1))/(sum2*1.0-(sum4*sum4*1.0)/(height-1));
-    b = sum3*1.0/(height-1) - k*(sum4*1.0/(height-1));
+    k = (sum1*1.0-(sum3*sum4*1.0)/(height*0.7 - y_0))/(sum2*1.0-(sum4*sum4*1.0)/(height*0.7 - y_0));
+    b = sum3*1.0/(height*0.7 - y_0) - k*(sum4*1.0/(height*0.7 - y_0));
 
     //=======展示拟合之后的线==========
 
-    for (y = 1; y < height; y++)
+    for (y = (short)(height*0.7)-1; y >= y_0; y--)
     {
         x = (short)(k*y+b);
         org[y][x] = 0xf0;
     }
 
     //==============目标线==============
-    for (x=0; x<wideth; x++)
-    {
-        org[height*targetlinePer/100][x] = 0xf0;
-    }
+    // for (x=0; x<wideth; x++)
+    // {
+    //     org[height*targetlinePer/100][x] = 0xf0;
+    // }
 
 
     //==============这里返回线与目标线的插值============

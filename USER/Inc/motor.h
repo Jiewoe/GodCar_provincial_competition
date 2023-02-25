@@ -8,6 +8,7 @@
 
 int max (int a, int b);
 void Move_Forward ();
+void Move_left();
 void Lateral_correction (short piancha);
 
 void Motor_Init();

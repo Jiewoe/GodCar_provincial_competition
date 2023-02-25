@@ -138,27 +138,30 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
     Motor_Init();
-    //
     
-    //testInit  ();
+    testInit  ();
     
     Servo_Init();
+    
+    // Move_left();
     DisPlay_Init();
 
     //JY60Init (&huart5);
-                //HAL_UART_Receive_IT(&huart5, DMARecieveBuffer_JY60, 11);
+    //HAL_UART_Receive_IT(&huart5, DMARecieveBuffer_JY60, 11);
     // JY60DMAInit ();
 
   /* USER CODE END 2 */
-    Move_left();
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   target = 200;
   
     while (1)
     {
-        //Move_Forward();
-        //testFunc ();
+        // Move_Forward();
+        testFunc ();
+
+        // printCnt();
     }
 
     /* USER CODE END WHILE */
@@ -233,7 +236,7 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
-//系统定时器中�??????????
+//系统定时器中�???????????
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     /* Prevent unused argument(s) compilation warning */
@@ -245,23 +248,25 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     if (htim == &htim2)
     {
         round1++;
-        //printf("YESSSSSSSSSSSSSSSSSSSSSSS");
+        // printf("\nround1 ++ %d\n", round1);
         HAL_TIM_Base_Start_IT (&htim2);
     }
     if (htim == &htim3)
     {
         round2++;
-        //printf("YESSSSSSSSSSSSSSSSSSSSSSS");
+        // printf ("round2 ++ %d\n",round2);
         HAL_TIM_Base_Start_IT (&htim3);
     }
     if (htim == &htim4)
     {
         round3++;
         HAL_TIM_Base_Start_IT (&htim4);
+        // printf ("round3 ++ %d\n",round3);
     }
     if (htim == &htim8)
     {
         round4++;
+        // printf ("round4 ++ %d\n",round4);
         HAL_TIM_Base_Start_IT (&htim8);
     }
     // if (htim == &htim6)
@@ -275,7 +280,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     //         // Lateral_correction();
     //     }
 
-    //     //写完成条�??????????
+    //     //写完成条�???????????
     //     if (IF_MOVE == 0)
     //     {
     //         procedure++;
@@ -296,11 +301,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 //空闲中断处理函数
 void USAR_UART_IDLECallback(UART_HandleTypeDef *huart)
 {
-    if (RESET != __HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE)) //判断idle标志被置�??????
+    if (RESET != __HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE)) //判断idle标志被置�???????
     {
         __HAL_UART_CLEAR_IDLEFLAG(huart); //清除标志
         HAL_UART_DMAStop(huart);         // 停止DMA传输
-        //处理中断标志�????
+        //处理中断标志�?????
 
         if (huart == &huart4)
         {

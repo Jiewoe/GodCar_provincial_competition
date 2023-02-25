@@ -57,7 +57,10 @@ extern uint8_t IF_MOVE;
 //定时器改名字
 //轮子pwm
 
-//一共6000
+/*
+    speed 0~6000
+
+*/
 #define Motor1_Speed (TIM1->CCR1)
 #define Motor2_Speed (TIM1->CCR2)
 #define Motor3_Speed (TIM1->CCR3)

@@ -111,14 +111,41 @@ void Lateral_correction (short piancha)
 //向左转弯
 void Move_left()
 {
-    HAL_GPIO_WritePin (Motor_GPIO, Motor2_Pin|Motor2_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin (Motor_GPIO, Motor1_Pin|Motor2_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin (Motor_GPIO, Motor3_Pin|Motor4_Pin, GPIO_PIN_SET);
     Motor2_Speed = Motor1_Speed = 1500;
     Motor4_Speed = Motor3_Speed = 6000-1500;
-    HAL_Delay (1000);
+    HAL_Delay (1080);
+    
     Motor_Init();
 }
 
+/*
+
+    通过编码器计数改变方向
+
+    angle 转向角度 （0~360）
+
+    逆时针转向为正
+
+    motor2_cnt ++
+    motor4_cnt --
+
+    (angle/360) * (pai * d) / 6 = round2
+    ((angle/360) * (pai * d) % 6) * 60000 = cnt
+
+    废弃………………
+
+*/
+void moveDirection(uint16_t angle)
+{
+
+    HAL_GPIO_WritePin (Motor_GPIO, Motor1_Pin|Motor2_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin (Motor_GPIO, Motor3_Pin|Motor4_Pin, GPIO_PIN_SET);
+
+
+
+}
 
 
 int max (int a, int b)
@@ -126,4 +153,33 @@ int max (int a, int b)
     if (a>b)
     return a;
     return b;
+}
+
+// void motorTest(uint8_t motor)
+// {
+//     switch ( motor)
+//     {
+//     case 1:
+//         Motor1_Speed = 100;
+//         break;
+//     case 2:
+//         Motor2_Speed = 100;
+//         break;
+//     case 3:
+//         Motor3_Speed = 100;
+//         break;
+//     case 4:
+//         Motor4_Speed = 100;
+//         break;
+//     default:
+//         break;
+//     }
+// }
+
+void printCnt(void)
+{
+    // printf("\nround1 and round2: %d %d\n", round1, round2);
+    // printf("round3 and round4: %d %d\n", round3, round4);
+    printf("cnt1 and cnt2: %d %d\n", Motor1_CNT, Motor2_CNT);
+    printf("cnt3 and cnt4: %d %d\n", Motor3_CNT, Motor4_CNT);
 }
