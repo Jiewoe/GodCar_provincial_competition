@@ -5,7 +5,12 @@
 
 //openmv1 下面的 usart 2
 //opemmv2 前面的 usart 3
+void Procedure_Setting(uint8_t now);
 
+extern uint8_t round1;
+extern uint8_t round2;
+extern uint8_t round3;
+extern uint8_t round4;
 
 //声明变量
 extern TIM_HandleTypeDef htim1;
@@ -36,6 +41,8 @@ extern uint8_t target;
     Usart_Buffer 0x24000000 + Display_Width*Display_Height
     Display_Buffer = 0x24000000+0x40000; 宽度64
     uint8_t *DMARecieveBuffer_JY60 = 0x24040040; 宽度11
+    openmv1 0x24040080
+    openmv2 0x240400C0
 
     
 
@@ -44,9 +51,10 @@ extern uint8_t target;
 
 #define Camera_Buffer 0x24000000 // 原始数据dma位置
 #define Usart_Buffer 0x24000000 + Display_Width*Display_Height //处理过程中数据位置
-
-extern uint8_t OpenMV1[7];
-extern uint8_t OpenMV2[7];
+#define openmv1 0x24000080
+#define openmv2 0x240000C0
+// extern uint8_t OpenMV1[7];
+// extern uint8_t OpenMV2[7];
 
 
 //状态控制

@@ -5,6 +5,8 @@
 //去掉dma里的callback函数
 
 #include "camprocess.h"
+#include "ov5640test.h"
+
 void CenterLine_show(CamStruct *ov5640);
 
 /*-------------Canny算法检测边缘---------------LQ--
@@ -155,18 +157,20 @@ short CannyEdgeTest(CamStruct *ov5640, uint8_t lowThr)
     uint8_t *center, flag=1, y_0, piaCnt=0;
     center = (ov5640->BufferAddress + wideth * height * 2);
 
-    center[(short)(height*0.7)] = wideth/2;
+    short start = (short)(height * 0.7);
+
+    center[start] = wideth/2;
 
     double k, b;
     int sum1 = 0, sum2 = 0, sum3 = 0, sum4=0;
 
-    for (y = (short)(height*0.7)-1; y >= 0; y--)          //自顶向下扫描（这里的顶是指y值最大的边界，即图片下边缘）
+    for (y = start-1; y >= 0; y--)          //自顶向下扫描（这里的顶是指y值最大的边界，即图片下边缘）
     {
-        for (x = center[y+1]; x < wideth - 20; x++)
+        for (x = center[y+1]; x < wideth - 20; x++)     //从上一个捕获到的中心点开始往两边扫描，中心点初始值为下边缘图片的中点
         {
             if (org[y][x] > 0xe0)
             {
-                Xg = x;
+                Xg = x;                                 //xg，yg都是借用了上面的变量，命名没有实际意义，当作两个临时变量用
                 break;
             }
         }
@@ -180,12 +184,12 @@ short CannyEdgeTest(CamStruct *ov5640, uint8_t lowThr)
         }
         center[y] = (Xg + Yg) / 2;
 
-        if (fabs(center[y]-center[y-1])>20 && flag == 1)    //flag=1 y_0没有值，flag=0 y_0有值
+        if (fabs(center[y]-center[y+1])>20 && flag == 1)    //flag=1 y_0没有值，flag=0 y_0有值，这里判定是否给y_0赋值，30为偏移值（可调）
         {
             y_0 = y;
         }
 
-        if (fabs(center[y]-center[y_0]) > 20)
+        if (fabs(center[y]-center[y_0]) > 20)               //这里计算偏差累计
         {
             flag = 0;
             piaCnt ++;
@@ -208,7 +212,7 @@ short CannyEdgeTest(CamStruct *ov5640, uint8_t lowThr)
     }
 
     //========中心散点显示========（可去除）
-    for (y = (short)(height*0.7)-1; y >= y_0; y--)
+    for (y = start-1; y >= y_0; y--)
     {
         org[y][center[y]] = 0xf0;
     }
@@ -218,13 +222,18 @@ short CannyEdgeTest(CamStruct *ov5640, uint8_t lowThr)
     k = (sum1*1.0-(sum3*sum4*1.0)/(height*0.7 - y_0))/(sum2*1.0-(sum4*sum4*1.0)/(height*0.7 - y_0));
     b = sum3*1.0/(height*0.7 - y_0) - k*(sum4*1.0/(height*0.7 - y_0));
 
+    printf ("\nk值：%.2lf\n", k);
+
+    test_k = k;
+    test_b = b;
+
     //=======展示拟合之后的线==========
 
-    for (y = (short)(height*0.7)-1; y >= y_0; y--)
-    {
-        x = (short)(k*y+b);
-        org[y][x] = 0xf0;
-    }
+    // for (y = start-1; y >= y_0; y--)
+    // {
+    //     x = (short)(k*y+b);
+    //     org[y][x] = 0xf0;
+    // }
 
     //==============目标线==============
     // for (x=0; x<wideth; x++)

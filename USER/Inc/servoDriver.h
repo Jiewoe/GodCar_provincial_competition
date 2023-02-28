@@ -82,6 +82,29 @@
 #define Servo6_Angle (TIM12->CCR1)
 #define Servo7_Angle (TIM12->CCR2)
 
+/*
+    动作参数结构体
+    rightArm    右臂角度
+    leftArm     左臂角度
+    holder      云台角度
+    CargoNo     货架编号
+*/
+typedef struct CargoActionPara
+{
+    uint8_t rightArm;
+    uint8_t leftArm;
+    uint16_t holder;
+    uint8_t cargoNo;
+
+} ActionParameter;
+
+extern ActionParameter Cargo1_ActionDown;
+extern ActionParameter Cargo1_ActionUp;
+extern ActionParameter Cargo2_ActionDown;
+extern ActionParameter Cargo2_ActionUp;
+extern ActionParameter Cargo3_ActionDown;
+extern ActionParameter Cargo3_ActionUp;
+
 extern TIM_HandleTypeDef htim5;
 extern TIM_HandleTypeDef htim12;
 extern TIM_HandleTypeDef htim14;
@@ -96,6 +119,8 @@ extern uint8_t  CargoStatus_1;
 extern uint8_t  CargoStatus_2;
 extern uint8_t  CargoStatus_3;
 
+extern uint8_t cargo_flag;
+
 void Servo_Init(void);
 void InitServoAngle(uint8_t CargoAngle, uint8_t PawAngle, uint16_t HolderAngle, uint8_t LeftArmAngle, uint8_t RightArmAngle);
 void HolderControl(uint16_t angle);
@@ -104,6 +129,10 @@ void LeftArmControl (uint8_t LeftAngle);
 void RightArmControl (uint8_t RightAngle);
 void Servo_Init(void);
 void CargoSet(uint8_t Cargo_pos, uint8_t SetStatus);
+void CargoAction (ActionParameter up, ActionParameter down);
+void CargoFetch(ActionParameter up, ActionParameter down);
+void freeAngle(void);
+
 
 
 #endif

@@ -139,7 +139,7 @@ int main(void)
 
     Motor_Init();
     
-    testInit  ();
+    //testInit  ();
     
     Servo_Init();
     
@@ -148,18 +148,19 @@ int main(void)
 
     //JY60Init (&huart5);
     //HAL_UART_Receive_IT(&huart5, DMARecieveBuffer_JY60, 11);
+    HAL_UART_Receive_DMA(&huart2, 0x24000000,64);
     // JY60DMAInit ();
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  target = 200;
+  //target = 200;
   
     while (1)
     {
         // Move_Forward();
-        testFunc ();
+        //testFunc ();
 
         // printCnt();
     }

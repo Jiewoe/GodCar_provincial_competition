@@ -10,7 +10,8 @@ uint8_t round4 = 0;
 uint8_t target = 0;
 
 //状态控制
-uint8_t procedure = 0;
+//这在里可以增加开始按钮
+uint8_t procedure = 1;
 
 //是否移动
 uint8_t IF_MOVE = 0;
@@ -54,19 +55,20 @@ void Move_Forward ()
         Motor2_Speed = Motor4_Speed = 0; //停车
         Motor2_CNT = Motor4_CNT = 0;
         round2 = round4 = 0;
+        procedure ++;
         return;
     }
     //======进行线性启动=======
     //最低速度为500 
     if (target-Piancha < 10)
     {
-        Motor2_Speed = Motor4_Speed = max (800, (target - Piancha)*200);//在这里调整最大速度
+        Motor2_Speed = Motor4_Speed = max (1000, (target - Piancha)*250);//在这里调整最大速度
         return;
     }
     //======进行线性停止=======
     if (Piancha < 10)
     {
-        Motor2_Speed = Motor4_Speed = max (500, (Piancha)*200);
+        Motor2_Speed = Motor4_Speed = max (1000, (Piancha)*250);
         return;
     }
 }
@@ -89,23 +91,42 @@ void Move_Forward ()
     // }
 
 
+/*
+    偏差修正
 
-void Lateral_correction (short piancha)
+    偏差为角度值
+    即车辆法线与赛道方向的夹角
+    
+    piancha 偏差绝对值
+    sign    符号标识 为1时偏差大于0（左偏） 为0时偏差小于0（右偏）
+
+    编码器计数方案
+*/
+void Lateral_correction (uint8_t  piancha, uint8_t sign)
 {
-    //相应阈值调整
-    if (piancha > 5)
+    if (piancha > 4)
     {
-        //先调整车轮旋转方向
-        //在调整车轮速度
-        return;
+        if (sign == 1)    //整车左偏
+        {
+            HAL_GPIO_WritePin (Motor_GPIO, Motor1_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin (Motor_GPIO, Motor3_Pin, GPIO_PIN_RESET);
+            Motor1_Speed = 6000-piancha * 100;
+            Motor3_Speed = piancha *100;
+        }
+        else if (sign == 0)   //整车右偏
+        {
+            HAL_GPIO_WritePin (Motor_GPIO, Motor1_Pin, GPIO_PIN_RESET);
+            HAL_GPIO_WritePin (Motor_GPIO, Motor3_Pin, GPIO_PIN_SET);
+            Motor1_Speed = piancha *100;
+            Motor3_Speed = 6000-piancha * 100;
+
+        }
     }
-    if (piancha < -5)
-    {
-        //调整车轮方向
-        //调整车轮速度
-        return;
-    }
-    Motor1_Speed = Motor2_Speed = 0;
+    // Motor1_Speed = 500;
+    // Motor3_Speed = 6000-500;
+
+    
+
 }
 
 //向左转弯
@@ -115,10 +136,11 @@ void Move_left()
     HAL_GPIO_WritePin (Motor_GPIO, Motor3_Pin|Motor4_Pin, GPIO_PIN_SET);
     Motor2_Speed = Motor1_Speed = 1500;
     Motor4_Speed = Motor3_Speed = 6000-1500;
-    HAL_Delay (1080);
-    
+    HAL_Delay (1100);
+    procedure++;
     Motor_Init();
 }
+
 
 /*
 
@@ -147,6 +169,8 @@ void moveDirection(uint16_t angle)
 
 }
 
+  
+
 
 int max (int a, int b)
 {
@@ -154,27 +178,6 @@ int max (int a, int b)
     return a;
     return b;
 }
-
-// void motorTest(uint8_t motor)
-// {
-//     switch ( motor)
-//     {
-//     case 1:
-//         Motor1_Speed = 100;
-//         break;
-//     case 2:
-//         Motor2_Speed = 100;
-//         break;
-//     case 3:
-//         Motor3_Speed = 100;
-//         break;
-//     case 4:
-//         Motor4_Speed = 100;
-//         break;
-//     default:
-//         break;
-//     }
-// }
 
 void printCnt(void)
 {

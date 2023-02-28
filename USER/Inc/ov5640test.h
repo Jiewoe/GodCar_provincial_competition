@@ -6,6 +6,9 @@
 #include "sys.h"
 #include "usart_dma.h"
 
+extern double test_k;
+extern double test_b;
+
 void testInit(void);
 void testFunc(void);
 

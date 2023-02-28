@@ -19,6 +19,17 @@ uint8_t  CargoStatus_1;
 uint8_t  CargoStatus_2;
 uint8_t  CargoStatus_3;
 
+uint8_t cargo_flag=0;
+
+ActionParameter Cargo1_ActionDown = {140, 65, 215, 1};    //1号货架放下动作参数
+ActionParameter Cargo1_ActionUp = {155, 28, 215, 1};      //1号货架抬起动作参数,下同
+
+ActionParameter Cargo2_ActionDown = {148, 61, 239, 2};
+ActionParameter Cargo2_ActionUp = {155, 27, 239, 2};
+
+ActionParameter Cargo3_ActionDown = {140, 70, 265, 3};
+ActionParameter Cargo3_ActionUp = {155, 28, 265, 3};
+
 /*
 
     初始化函数：
@@ -51,9 +62,9 @@ void InitServoAngle(uint8_t CargoAngle, uint8_t PawAngle, uint16_t HolderAngle, 
 */
 void Servo_Init(void)
 {
-    HolderControl (135);
-    RightArmControl (0);
-    LeftArmControl (100);
+    HolderControl (90);
+    RightArmControl (90);
+    LeftArmControl (90);
     CargoSet (CARGO_1, CARGO_SET);
     CargoSet(2, 1);
     CargoSet(3, 1);
@@ -205,4 +216,132 @@ void CargoSet(uint8_t Cargo_pos, uint8_t SetStatus)
         default:
             return;
     }
+}
+
+
+/*
+    自由角度
+
+*/
+
+void freeAngle(void)
+{
+    HolderControl (155);
+    LeftArmControl (65);
+    RightArmControl (120);
+}
+
+
+/*
+    通用型动作函数
+*/
+void CargoAction (ActionParameter up, ActionParameter down)
+{
+    //回归自由度数
+    freeAngle ();
+
+    HAL_Delay (1000);
+
+    //调整合适的移动角度，打开载物台
+    if (up.cargoNo == 1)
+    {
+        RightArmControl (up.rightArm);
+        LeftArmControl (up.leftArm);
+    }
+    else if (up.cargoNo == 2 || up.cargoNo == 3)
+    {
+        RightArmControl (125);
+        LeftArmControl  (35);
+    }
+
+    CargoSet (up.cargoNo, 0);
+
+    HAL_Delay (600);
+
+    //移动到载物台上方
+    HolderControl (up.holder);
+    HAL_Delay (400);
+
+
+    // RightArmControl (160);
+    // LeftArmControl (25);
+
+    HAL_Delay (400);
+
+    //放下物块
+    RightArmControl (down.rightArm);
+    LeftArmControl (down.leftArm);
+    
+    HAL_Delay (600);
+
+    PawControl (125);
+
+    HAL_Delay  (400);
+
+    //抬起机械臂
+    LeftArmControl (up.leftArm);
+    RightArmControl (up.rightArm);
+
+    HAL_Delay (600);
+
+    // LeftArmControl (35);
+    // RightArmControl (140);
+    HAL_Delay (500);
+
+    //载物台关闭，移开机械臂
+    CargoSet (down.cargoNo, 1);
+    HolderControl (180);
+
+    HAL_Delay (500);
+    PawControl (100);
+
+    //回归自由角度
+    freeAngle ();
+}
+
+void CargoFetch(ActionParameter up, ActionParameter down)
+{
+    freeAngle ();
+
+    HAL_Delay (1000);
+
+    //调整合适移动角度，打开抓夹
+    RightArmControl (up.rightArm);
+    LeftArmControl  (up.leftArm);
+    PawControl (120);
+
+    HAL_Delay (800);
+
+    //打开货架，移动到载物台上方
+    CargoSet (up.cargoNo, 0);
+    HolderControl (up.holder);
+
+    HAL_Delay (1000);
+
+    //移动到货物前方
+    RightArmControl (down.rightArm);
+    LeftArmControl (down.leftArm);
+
+    HAL_Delay (500);
+
+    //抓取
+    PawControl (95);
+    
+    HAL_Delay (400);
+
+    //抬起到合适角度
+    RightArmControl (125);
+    LeftArmControl  (35);
+
+    HAL_Delay (400);
+
+    //移出载物台区域
+    HolderControl (180);
+    CargoSet (up.cargoNo, 1);
+
+    HAL_Delay (500);
+
+    //回到自由角度
+    freeAngle ();
+
 }

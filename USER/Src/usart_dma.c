@@ -40,23 +40,23 @@ volatile uint8_t USART1_TX_State = 1;  // DCMI状态标志，当数据帧传输�
 *
 *****************************************************************************************************************************************/
 
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
-{
-	static uint32_t 	USART_Tick = 0;         // 用于保存当前的时间计数值
-   static uint8_t 	USART_Frame_Count = 0;   // 帧数计数   
+// void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+// {
+// 	static uint32_t 	USART_Tick = 0;         // 用于保存当前的时间计数值
+//    static uint8_t 	USART_Frame_Count = 0;   // 帧数计数   
 
- 	if(HAL_GetTick() - USART_Tick >= 1000)    // 每隔 1s 计算一次帧率
-	{
-		USART_Tick = HAL_GetTick();       // 重新获取当前时间计数值
+//  	if(HAL_GetTick() - USART_Tick >= 1000)    // 每隔 1s 计算一次帧率
+// 	{
+// 		USART_Tick = HAL_GetTick();       // 重新获取当前时间计数值
 
-		USART_FPS = USART_Frame_Count;		// 串口发送速度（每秒发送照片的帧数）
+// 		USART_FPS = USART_Frame_Count;		// 串口发送速度（每秒发送照片的帧数）
 
-		USART_Frame_Count = 0;            // 计数清0
-	}
-	USART_Frame_Count ++;    // 每进入一次中断（每次传输完一帧数据），计数值+1
+// 		USART_Frame_Count = 0;            // 计数清0
+// 	}
+// 	USART_Frame_Count ++;    // 每进入一次中断（每次传输完一帧数据），计数值+1
 
-	USART1_TX_State = 1;
-}
+// 	USART1_TX_State = 1;
+// }
 
 
 /*************************************************************************************************
