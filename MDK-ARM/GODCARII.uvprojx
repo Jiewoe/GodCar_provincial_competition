@@ -619,6 +619,11 @@
               <FileType>1</FileType>
               <FilePath>..\USER\Src\ov5640test.c</FilePath>
             </File>
+            <File>
+              <FileName>openmv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\Src\openmv.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

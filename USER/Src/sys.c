@@ -1,37 +1,53 @@
 
 #include "sys.h"
+#include "servoDriver.h"
+#include "openmv.h"
 
+uint8_t Assignment[6] = {};
+uint8_t IF_LINE = 0;
+uint8_t IF_CIRCLE = 0;
 
-// uint8_t OpenMV1[7];
-// uint8_t OpenMV2[7];
+uint8_t leftDistance = 5;       //从启停区左移距离
+uint8_t codeDistance = 80;      //到二维码板子距离
+uint8_t materialDistance = 100; //到原料区距离
 
 //在这里设置每一步做什么
 void Procedure_Setting(uint8_t now)
 {
-    static uint8_t setted = 0;
+    static uint8_t setted = -1;
     //和之前的一样就不执行
     if (now==setted) return;
     setted = now;
     switch (now)
     {
-        //第一步：移动到二维码前面
+        case 0: //移出启停区域
+            HAL_Delay (500);
+            left_target = leftDistance;
+            IF_MOVE = 2;    //左移标识
+
+            break;
+
+        //第二步：移动到二维码前面
         case 1:
             HAL_Delay (500);
-            target = 80; //到板子距离
+            ActionFunc (lineAngle); //调整到巡线位置
+            HAL_UART_Transmit (&huart2, SLine, 7, 0x00ff);
+            
+            target = codeDistance;
+
+            HAL_Delay (500);
             IF_MOVE = 1;
-            //命令接受二维码 
-            //这里要封装机械臂初始化
-            // uint8_t a[3] = {0x55, 0x30, 0x66};
-            // HAL_UART_Transmit (&huart3, a, 3, 0xfff);
-            // HAL_UART_Receive_IT (&huart3,OpenMV1,7);
+            
             break;
+        
+        //移动到原料区
         case 2:
             HAL_Delay (500);
-            target = 100; //到原料区距离
+            target = materialDistance; 
             IF_MOVE = 1;
-            //慢慢移动
-            // HAL_UART_Receive_IT (&huart2, OpenMV2, 7);//接收回调没写//停车指令
+
             break;
+        
         case 3:
             HAL_Delay (500);
             //停车重复接收机械臂指令
@@ -47,7 +63,6 @@ void Procedure_Setting(uint8_t now)
             break;
         case 5://到达拐角
             HAL_Delay (500);
-            Move_left();
             break;
         case 6: //到达中点
             HAL_Delay (500);
@@ -66,7 +81,6 @@ void Procedure_Setting(uint8_t now)
             break;
         case 9: 
             HAL_Delay (500);
-            Move_left ();
             break;
         case 10:
             HAL_Delay (500);

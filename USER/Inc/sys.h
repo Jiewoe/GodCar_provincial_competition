@@ -23,6 +23,9 @@ extern TIM_HandleTypeDef htim8;
 extern TIM_HandleTypeDef htim12;
 extern TIM_HandleTypeDef htim14;
 
+
+
+
 extern UART_HandleTypeDef huart5;
 extern UART_HandleTypeDef huart7;
 extern UART_HandleTypeDef huart8;
@@ -34,6 +37,20 @@ extern DMA_HandleTypeDef hdma_usart1_tx;
 extern DMA_HandleTypeDef hdma_usart2_tx;
 
 extern uint8_t target;
+extern uint8_t left_target;
+extern uint8_t right_target;
+
+typedef struct 
+{
+    uint8_t length;
+    uint8_t hengPian[3];
+    uint8_t zongPian[3];
+} Queue;
+
+extern uint8_t DataCheck_fla; //数据是否进行检验标志位，如果还在收集数据，则为0，收集完为1
+extern uint8_t hengPian_flag;  //横向偏差是否有效标志位，决定本次数据是否进行修正，0为无效，1有效（进行修正）
+extern uint8_t zongPian_flag;  //纵向偏差是否有效标志位
+extern Queue circleData;
 
 //内存控制
 /*
@@ -53,6 +70,7 @@ extern uint8_t target;
 #define Usart_Buffer 0x24000000 + Display_Width*Display_Height //处理过程中数据位置
 #define openmv1 0x24000080
 #define openmv2 0x240000C0
+
 // extern uint8_t OpenMV1[7];
 // extern uint8_t OpenMV2[7];
 
@@ -60,6 +78,9 @@ extern uint8_t target;
 //状态控制
 extern uint8_t procedure;
 extern uint8_t IF_MOVE;
+extern uint8_t IF_LINE;
+extern uint8_t IF_CIRCLE;
+extern uint8_t Assignment[6];
 
 
 //定时器改名字

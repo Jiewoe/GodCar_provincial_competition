@@ -38,6 +38,10 @@
 #include "Display.h"
 #include "esp8266.h"
 #include "JY60.h"
+#include "openmv.h"
+
+const uint8_t testLen = 7;
+uint8_t testBuffer[testLen];
 
 /* USER CODE END Includes */
 
@@ -131,10 +135,10 @@ int main(void)
   MX_UART5_Init();
   MX_UART7_Init();
   MX_UART8_Init();
-  MX_USART2_UART_Init();
-  MX_USART3_UART_Init();
   MX_USART6_UART_Init();
   MX_UART4_Init();
+  MX_USART2_UART_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 
     Motor_Init();
@@ -143,13 +147,13 @@ int main(void)
     
     Servo_Init();
     
-    // Move_left();
     DisPlay_Init();
 
-    //JY60Init (&huart5);
-    //HAL_UART_Receive_IT(&huart5, DMARecieveBuffer_JY60, 11);
-    HAL_UART_Receive_DMA(&huart2, 0x24000000,64);
-    // JY60DMAInit ();
+    HAL_UART_Receive_IT (&huart1, testBuffer, testLen);
+
+    //HAL_Delay (6000);
+
+    openmv_Init();
 
   /* USER CODE END 2 */
 
@@ -159,8 +163,48 @@ int main(void)
   
     while (1)
     {
-        // Move_Forward();
-        //testFunc ();
+        if (IF_MOVE == 1) //IF_MOVE == 1 前进
+        {
+            Move_Forward ();
+        }
+        else if (IF_MOVE == 2)  //IF_MOVE == 2 左移
+        {
+            Move_Left;
+        }
+
+
+        if (cargo_flag == 1)
+        {
+            CargoAction (Cargo1_ActionUp, Cargo1_ActionDown);
+            cargo_flag = 0;
+        }
+        else if (cargo_flag == 2)
+        {
+            CargoAction (Cargo2_ActionUp, Cargo2_ActionDown);
+            cargo_flag = 0;
+        }
+        else if (cargo_flag == 3)
+        {
+            CargoAction (Cargo3_ActionUp, Cargo3_ActionDown);
+            cargo_flag = 0;
+        }
+        else if (cargo_flag == 4)
+        {
+            CargoFetch (Cargo1_FetchUp, Cargo1_FetchDown);
+            cargo_flag = 0;
+        }
+        else if (cargo_flag == 5)
+        {
+            CargoFetch (Cargo2_FetchUp, Cargo2_FetchDown);
+            cargo_flag = 0;
+        }
+        else if (cargo_flag == 6)
+        {
+            CargoFetch (Cargo3_FetchUp, Cargo3_FetchDown);
+            cargo_flag = 0;
+        }
+        
+
 
         // printCnt();
     }
@@ -237,7 +281,7 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
-//系统定时器中�???????????
+//系统定时器中�??????????????????
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     /* Prevent unused argument(s) compilation warning */
@@ -281,7 +325,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     //         // Lateral_correction();
     //     }
 
-    //     //写完成条�???????????
+    //     //写完成条�??????????????????
     //     if (IF_MOVE == 0)
     //     {
     //         procedure++;
@@ -297,22 +341,51 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
             JY60_Message_Pross(DMARecieveBuffer_JY60, &acce1, &angv1, &ang1);
             //HAL_UART_Receive_DMA(&huart5, DMARecieveBuffer_JY60, 11);
         }
+        if (huart == & huart2) 
+        {
+            MV_DataProcess1 (openmv1);
+            
+        }
+        if (huart == &huart3)
+        {
+            MV_DataProcess2 (openmv2);
+            
+        }
+        if (huart == &huart1)
+        {
+            // DisPlay_Porcess (testBuffer);
+            HAL_UART_Transmit (&huart2, testBuffer, testLen, 0x00ff);
+            HAL_UART_Receive_IT (&huart1, testBuffer, testLen);
+            
+        }
+        // if (huart == &huart1)
+        // {
+        //     MV_message_check (openmv1, &huart1);
+        // }
 }
 
 //空闲中断处理函数
 void USAR_UART_IDLECallback(UART_HandleTypeDef *huart)
 {
-    if (RESET != __HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE)) //判断idle标志被置�???????
-    {
+    if (RESET != __HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE)) //判断idle标志被置�??????????????
+    { 
         __HAL_UART_CLEAR_IDLEFLAG(huart); //清除标志
         HAL_UART_DMAStop(huart);         // 停止DMA传输
-        //处理中断标志�?????
+        //处理中断标志�????????????
 
         if (huart == &huart4)
         {
             DisPlay_Porcess(Display_Buffer);
             HAL_UART_Receive_DMA(&huart4, Display_Buffer, 64);
         }
+    //    if (huart == &huart7)
+    //    {
+    //        HAL_UART_Receive_DMA(&huart7, 0x24000000,64);
+    //    }
+    //    if (huart == &huart8)
+    //    {
+        
+    //    }
 //        if (huart == &huart5)
 //        {
 //            JY60_Message_Pross(DMARecieveBuffer_JY60, &acce1, &angv1, &ang1);

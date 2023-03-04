@@ -105,6 +105,17 @@ extern ActionParameter Cargo2_ActionUp;
 extern ActionParameter Cargo3_ActionDown;
 extern ActionParameter Cargo3_ActionUp;
 
+extern ActionParameter Cargo1_FetchDown;
+extern ActionParameter Cargo1_FetchUp;
+extern ActionParameter Cargo2_FetchDown;
+extern ActionParameter Cargo2_FetchUp;
+extern ActionParameter Cargo3_FetchDown;
+extern ActionParameter Cargo3_FetchUp;
+
+extern ActionParameter freeAngle;
+extern ActionParameter lineAngle;
+extern ActionParameter circleAngle;
+
 extern TIM_HandleTypeDef htim5;
 extern TIM_HandleTypeDef htim12;
 extern TIM_HandleTypeDef htim14;
@@ -122,7 +133,6 @@ extern uint8_t  CargoStatus_3;
 extern uint8_t cargo_flag;
 
 void Servo_Init(void);
-void InitServoAngle(uint8_t CargoAngle, uint8_t PawAngle, uint16_t HolderAngle, uint8_t LeftArmAngle, uint8_t RightArmAngle);
 void HolderControl(uint16_t angle);
 void PawControl(uint8_t angle);
 void LeftArmControl (uint8_t LeftAngle);
@@ -131,8 +141,17 @@ void Servo_Init(void);
 void CargoSet(uint8_t Cargo_pos, uint8_t SetStatus);
 void CargoAction (ActionParameter up, ActionParameter down);
 void CargoFetch(ActionParameter up, ActionParameter down);
-void freeAngle(void);
+void PickCargo_Yuanliao (uint8_t color);
+void PickCargo_Ground(uint8_t color);
+void ActionFunc(ActionParameter angle);
+
+/*
+    1---红色
+    2---绿色
+    3---蓝色
 
 
+
+*/
 
 #endif
