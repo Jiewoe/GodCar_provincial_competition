@@ -150,6 +150,9 @@ int main(void)
     DisPlay_Init();
 
     HAL_UART_Receive_IT (&huart1, testBuffer, testLen);
+    Assignment[0] = 2;
+    Assignment[1] = 1;
+    Assignment[2] = 3;
 
     //HAL_Delay (6000);
 
@@ -163,49 +166,81 @@ int main(void)
   
     while (1)
     {
-        if (IF_MOVE == 1) //IF_MOVE == 1 前进
+        if (IF_MOVE == 1 && IF_LINE == 1) //IF_MOVE == 1 并且 �?始循�? 前进
         {
             Move_Forward ();
         }
-        else if (IF_MOVE == 2)  //IF_MOVE == 2 左移
+
+//        if (IF_OUT = 1)
+//        {
+//            Move_Out ();
+//        }
+        //一下全是cargoset
         {
-            Move_Left;
+            if (cargo_flag == 1)
+            {
+                CargoAction (Cargo1_ActionUp, Cargo1_ActionDown);
+                cargo_flag = 0;
+            }
+            else if (cargo_flag == 2)
+            {
+                CargoAction (Cargo2_ActionUp, Cargo2_ActionDown);
+                cargo_flag = 0;
+            }
+            else if (cargo_flag == 3)
+            {
+                CargoAction (Cargo3_ActionUp, Cargo3_ActionDown);
+                cargo_flag = 0;
+            }
+            else if (cargo_flag == 4)
+            {
+                CargoFetch (Cargo1_FetchUp, Cargo1_FetchDown);
+                cargo_flag = 0;
+            }
+            else if (cargo_flag == 5)
+            {
+                CargoFetch (Cargo2_FetchUp, Cargo2_FetchDown);
+                cargo_flag = 0;
+            }
+            else if (cargo_flag == 6)
+            {
+                CargoFetch (Cargo3_FetchUp, Cargo3_FetchDown);
+                cargo_flag = 0;
+            }
+            else if (cargo_flag == 7)
+            {
+                PickCargo_Ground (CargoRed_GroundDown);
+                cargo_flag = 0;
+            }
+            else if (cargo_flag == 8)
+            {
+                PickCargo_Ground (CargoGreen_GroundDown);
+                cargo_flag = 0;
+            }
+            else if (cargo_flag == 9)
+            {
+                PickCargo_Ground (CargoBlue_GroundDown);
+                cargo_flag = 0;
+            }
+            else if (cargo_flag == 10)
+            {
+                PickCargo_Logic ();
+                cargo_flag = 0;
+            }
+            else if (cargo_flag == 11)
+            {
+                //DisposeCargo_Logic ();
+                cargo_flag = 0;
+            }
+            else if (cargo_flag == 12)
+            {
+                // ActionFunc (CargoRed_GroundDown);
+                DisposeCargo_Ground(CargoRed_GroundDown);
+                cargo_flag = 0;
+            }
         }
 
-
-        if (cargo_flag == 1)
-        {
-            CargoAction (Cargo1_ActionUp, Cargo1_ActionDown);
-            cargo_flag = 0;
-        }
-        else if (cargo_flag == 2)
-        {
-            CargoAction (Cargo2_ActionUp, Cargo2_ActionDown);
-            cargo_flag = 0;
-        }
-        else if (cargo_flag == 3)
-        {
-            CargoAction (Cargo3_ActionUp, Cargo3_ActionDown);
-            cargo_flag = 0;
-        }
-        else if (cargo_flag == 4)
-        {
-            CargoFetch (Cargo1_FetchUp, Cargo1_FetchDown);
-            cargo_flag = 0;
-        }
-        else if (cargo_flag == 5)
-        {
-            CargoFetch (Cargo2_FetchUp, Cargo2_FetchDown);
-            cargo_flag = 0;
-        }
-        else if (cargo_flag == 6)
-        {
-            CargoFetch (Cargo3_FetchUp, Cargo3_FetchDown);
-            cargo_flag = 0;
-        }
-        
-
-
+        Procedure_Setting (procedure);
         // printCnt();
     }
 
@@ -281,7 +316,7 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
-//系统定时器中�??????????????????
+//系统定时器中�????????????????????
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     /* Prevent unused argument(s) compilation warning */
@@ -325,7 +360,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     //         // Lateral_correction();
     //     }
 
-    //     //写完成条�??????????????????
+    //     //写完成条�????????????????????
     //     if (IF_MOVE == 0)
     //     {
     //         procedure++;
@@ -343,6 +378,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         }
         if (huart == & huart2) 
         {
+            
             MV_DataProcess1 (openmv1);
             
         }
@@ -367,11 +403,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 //空闲中断处理函数
 void USAR_UART_IDLECallback(UART_HandleTypeDef *huart)
 {
-    if (RESET != __HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE)) //判断idle标志被置�??????????????
+    if (RESET != __HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE)) //判断idle标志被置�????????????????
     { 
         __HAL_UART_CLEAR_IDLEFLAG(huart); //清除标志
         HAL_UART_DMAStop(huart);         // 停止DMA传输
-        //处理中断标志�????????????
+        //处理中断标志�??????????????
 
         if (huart == &huart4)
         {

@@ -1,5 +1,6 @@
 
 #include "motor.h"
+#include "openmv.h"
 
 uint8_t round1 = 0;
 uint8_t round2 = 0;
@@ -8,6 +9,7 @@ uint8_t round4 = 0;
 
 // 单位厘米
 uint8_t target = 0;
+uint8_t IF_OUT = 0;
 uint8_t left_target = 0;
 uint8_t right_target = 0;
 
@@ -15,14 +17,14 @@ uint8_t right_target = 0;
     滤波队列
 
 */
-uint8_t DataCheck_flag = 0; //数据是否进行检验标志位，如果还在收集数据，则为0，收集完为1
-uint8_t hengPian_flag = 0;  //横向偏差是否有效标志位，决定本次数据是否进行修正，0为无效，1有效（进行修正）
-uint8_t zongPian_flag = 0;  //纵向偏差是否有效标志位
-Queue circleData = {0, {{0, 0}, {0, 0}, {0,0}}};
+uint8_t DataCheck_flag = 0; // 数据是否进行检验标志位，如果还在收集数据，则为0，收集完为1
+uint8_t hengPian_flag = 0;  // 横向偏差是否有效标志位，决定本次数据是否进行修正，0为无效，1有效（进行修正）
+uint8_t zongPian_flag = 0;  // 纵向偏差是否有效标志位
+Queue circleData = {0, {{0, 0}, {0, 0}, {0, 0}}};
 
 // 状态控制
 // 这在里可以增加开始按钮
-uint8_t procedure = 1;
+uint8_t procedure = 0;
 
 // 是否移动
 uint8_t IF_MOVE = 0;
@@ -43,6 +45,14 @@ void Motor_Init()
     HAL_TIM_Base_Start_IT(&htim3);
     HAL_TIM_Base_Start_IT(&htim4);
     HAL_TIM_Base_Start_IT(&htim8);
+    round1 = round2 = round3 = round4 = 0;
+    Motor1_CNT = Motor2_CNT = Motor3_CNT = Motor4_CNT = 5000;
+    Motor1_Speed = Motor2_Speed = Motor3_Speed = Motor4_Speed = 0;
+    HAL_GPIO_WritePin(Motor_GPIO, Motor1_Pin | Motor2_Pin | Motor3_Pin | Motor4_Pin, GPIO_PIN_RESET);
+}
+
+void Move_Stop(void)
+{
     round1 = round2 = round3 = round4 = 0;
     Motor1_CNT = Motor2_CNT = Motor3_CNT = Motor4_CNT = 5000;
     Motor1_Speed = Motor2_Speed = Motor3_Speed = Motor4_Speed = 0;
@@ -81,21 +91,23 @@ void Move_Forward()
     }
 }
 /*
-    左移函数
+    移出启停区
 */
-void Move_Left()
+void Move_Out()
 {
-    int Piancha = left_target - (double)(((float)(round1 + round3) / 2 + (float)(Motor1_CNT + Motor3_CNT) / 120000) * 3.14 * 6);
-    printf("\n偏差是%d\n", Piancha);
-    printf("CNT:%d %d\n", Motor1_CNT, Motor3_CNT);
-    printf("round:%d\n", round1);
+    int Piancha = target - (double)(((float)(round2 + round4) / 2 + (float)(Motor2_CNT + Motor4_CNT) / 120000) * 3.14 * 6);
+    printf("偏差是%d\n", Piancha);
+    printf("CNT:%d", Motor2_CNT);
+    printf("round:%d", round2);
     //=====完成操作=======
     if (Piancha < 2)
     {
-        left_target = 0;
-        IF_MOVE = 0;
-        Motor1_Speed = Motor3_Speed = 0; // 停车
+        target = 0;
+        IF_OUT = 0;
+        Motor2_Speed = Motor4_Speed = 0; // 停车
+        Motor3_Speed = Motor1_Speed = 0;
         Motor1_CNT = Motor3_CNT = 0;
+        Motor2_CNT = Motor4_CNT = 0;
         round2 = round4 = 0;
         procedure++;
         return;
@@ -104,13 +116,13 @@ void Move_Left()
     // 最低速度为500
     if (target - Piancha < 10)
     {
-        Motor1_Speed = Motor3_Speed = max(1000, (target - Piancha) * 250); // 在这里调整最大速度
+        Motor1_Speed = Motor3_Speed = Motor2_Speed = Motor4_Speed = max(1000, (target - Piancha) * 250); // 在这里调整最大速度
         return;
     }
     //======进行线性停止=======
     if (Piancha < 10)
     {
-        Motor1_Speed = Motor3_Speed = max(1000, (Piancha)*250);
+        Motor1_Speed = Motor3_Speed = Motor2_Speed = Motor4_Speed = max(1000, (Piancha)*250);
         return;
     }
 }
@@ -131,6 +143,11 @@ void Move_Left()
 */
 void Lateral_correction(uint8_t sign, uint8_t piancha, uint8_t sign2, uint8_t hengPia)
 {
+    if(IF_FINISHLINE == 1) return;    //巡线未开启（或被关闭）直接退出, 只有在开启找圆前才用这个标志位，为了防止从巡线角度打到找圆角度时，巡线剩余消息进入导致车辆乱动
+
+    
+    uint16_t move_speed = 800; 
+    uint16_t rotate_speed = 1700;
     if (hengPia > 120)
     {
         sign2 = 0;
@@ -143,19 +160,20 @@ void Lateral_correction(uint8_t sign, uint8_t piancha, uint8_t sign2, uint8_t he
     }
     if (piancha > 3)
     {
+        
         if (sign == 0) // 整车左偏
         {
             HAL_GPIO_WritePin(Motor_GPIO, Motor1_Pin, GPIO_PIN_SET);
             HAL_GPIO_WritePin(Motor_GPIO, Motor3_Pin, GPIO_PIN_RESET);
-            Motor1_Speed = 6000 - 1500;
-            Motor3_Speed = 1500;
+            Motor1_Speed = 6000 - rotate_speed;
+            Motor3_Speed = rotate_speed;
         }
         else if (sign == 1) // 整车右偏
         {
             HAL_GPIO_WritePin(Motor_GPIO, Motor1_Pin, GPIO_PIN_RESET);
             HAL_GPIO_WritePin(Motor_GPIO, Motor3_Pin, GPIO_PIN_SET);
-            Motor1_Speed = 1500;
-            Motor3_Speed = 6000 - 1500;
+            Motor1_Speed = rotate_speed;
+            Motor3_Speed = 6000 - rotate_speed;
         }
     }
     if (piancha < 3)
@@ -170,15 +188,15 @@ void Lateral_correction(uint8_t sign, uint8_t piancha, uint8_t sign2, uint8_t he
             {
                 HAL_GPIO_WritePin(Motor_GPIO, Motor1_Pin, GPIO_PIN_SET);
                 HAL_GPIO_WritePin(Motor_GPIO, Motor3_Pin, GPIO_PIN_SET);
-                Motor1_Speed = 6000 - 1500;
-                Motor3_Speed = 6000 - 1500;
+                Motor1_Speed = 6000 - move_speed;
+                Motor3_Speed = 6000 - move_speed;
             }
             else
             {
                 HAL_GPIO_WritePin(Motor_GPIO, Motor1_Pin, GPIO_PIN_RESET);
                 HAL_GPIO_WritePin(Motor_GPIO, Motor3_Pin, GPIO_PIN_RESET);
-                Motor1_Speed = 1500;
-                Motor3_Speed = 1500;
+                Motor1_Speed = move_speed;
+                Motor3_Speed = move_speed;
             }
         }
         else
@@ -187,6 +205,8 @@ void Lateral_correction(uint8_t sign, uint8_t piancha, uint8_t sign2, uint8_t he
             HAL_GPIO_WritePin(Motor_GPIO, Motor3_Pin, GPIO_PIN_RESET);
             Motor1_Speed = 6000;
             Motor3_Speed = 0;
+
+            IF_LINE = 1;
         }
     }
 }
@@ -204,45 +224,24 @@ void Lateral_correction(uint8_t sign, uint8_t piancha, uint8_t sign2, uint8_t he
 */
 void MOVE_MV_micro(uint8_t symheng, uint8_t heng, uint8_t symzong, uint8_t zong)
 {
-    if (zong > 10) // 阈值调整
+    uint16_t speed = 780;
+    if (IF_CIRCLE != 1) //置1是执行
+        return;
+    if (heng > 12)
     {
-        if (symzong == 1)
-        {
-            HAL_GPIO_WritePin(Motor_GPIO, Motor1_Pin, GPIO_PIN_SET);
-            HAL_GPIO_WritePin(Motor_GPIO, Motor3_Pin, GPIO_PIN_SET);
-            Motor1_Speed = 6000 - 1000;
-            Motor3_Speed = 6000 - 1000;
-        }
-        else if (symzong == 0)
-        {
-            HAL_GPIO_WritePin(Motor_GPIO, Motor1_Pin, GPIO_PIN_RESET);
-            HAL_GPIO_WritePin(Motor_GPIO, Motor3_Pin, GPIO_PIN_RESET);
-            Motor1_Speed = 1000;
-            Motor3_Speed = 1000;
-        }
-    }
-    else
-    {
-        HAL_GPIO_WritePin(Motor_GPIO, Motor1_Pin, GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(Motor_GPIO, Motor3_Pin, GPIO_PIN_RESET);
-        Motor1_Speed = 0;
-        Motor3_Speed = 0;
-    }
-    if (heng > 10)
-    {
-        if (symheng == 1)
+        if (symheng == 0)
         {
             HAL_GPIO_WritePin(Motor_GPIO, Motor2_Pin, GPIO_PIN_SET);
             HAL_GPIO_WritePin(Motor_GPIO, Motor4_Pin, GPIO_PIN_SET);
-            Motor2_Speed = 6000 - 1000;
-            Motor4_Speed = 6000 - 1000;
+            Motor2_Speed = 6000 - speed;
+            Motor4_Speed = 6000 - speed;
         }
-        else if (symheng == 0)
+        else if (symheng == 1)
         {
             HAL_GPIO_WritePin(Motor_GPIO, Motor2_Pin, GPIO_PIN_RESET);
             HAL_GPIO_WritePin(Motor_GPIO, Motor4_Pin, GPIO_PIN_RESET);
-            Motor2_Speed = 1000;
-            Motor4_Speed = 1000;
+            Motor2_Speed = speed;
+            Motor4_Speed = speed;
         }
     }
     else
@@ -252,7 +251,53 @@ void MOVE_MV_micro(uint8_t symheng, uint8_t heng, uint8_t symzong, uint8_t zong)
         Motor2_Speed = 0;
         Motor4_Speed = 0;
     }
+    if (zong > 12) // 阈值调整
+    {
+        if (symzong == 1)
+        {
+            HAL_GPIO_WritePin(Motor_GPIO, Motor1_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(Motor_GPIO, Motor3_Pin, GPIO_PIN_SET);
+            Motor1_Speed = 6000 - speed;
+            Motor3_Speed = 6000 - speed;
+        }
+        else if (symzong == 0)
+        {
+            HAL_GPIO_WritePin(Motor_GPIO, Motor1_Pin, GPIO_PIN_RESET);
+            HAL_GPIO_WritePin(Motor_GPIO, Motor3_Pin, GPIO_PIN_RESET);
+            Motor1_Speed = speed;
+            Motor3_Speed = speed;
+        }
+    }
+    else
+    {
+        HAL_GPIO_WritePin(Motor_GPIO, Motor1_Pin, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(Motor_GPIO, Motor3_Pin, GPIO_PIN_RESET);
+        Motor1_Speed = 0;
+        Motor3_Speed = 0;
+    }
+    if (heng < 12 && zong < 12)
+    {
+        Move_Stop();
+        IF_CIRCLE = 0;
+
+        IF_FINISHLINE = 0;
+        procedure ++;
+    }
 }
+
+// void Move_Stop(void)
+// {
+//     HAL_GPIO_WritePin(Motor_GPIO, Motor1_Pin, GPIO_PIN_RESET);
+//     HAL_GPIO_WritePin(Motor_GPIO, Motor3_Pin, GPIO_PIN_RESET);
+//     Motor1_Speed = 0;
+//     Motor3_Speed = 0;
+
+//     HAL_GPIO_WritePin(Motor_GPIO, Motor2_Pin, GPIO_PIN_RESET);
+//     HAL_GPIO_WritePin(Motor_GPIO, Motor4_Pin, GPIO_PIN_RESET);
+//     Motor2_Speed = 0;
+//     Motor4_Speed = 0;
+
+// }
 
 // 向左转弯
 void Move_Turnleft()
@@ -307,16 +352,18 @@ void printCnt(void)
     printf("cnt3 and cnt4: %d %d\n", Motor3_CNT, Motor4_CNT);
 }
 
+
+
 void DataCheck(uint8_t *openmv)
 {
-    uint8_t range = 5;  //检测范围
+    uint8_t range = 5; // 检测范围
 
     if (DataCheck_flag == 1)
     {
-        if (fabs(openmv[3] - (circleData.hengPian[0]+circleData.hengPian[1])/2) < range)    //新加入数据在允许浮动范围之内，则新数据存入队列，删除一个老数据
+        if (fabs(openmv[3] - (circleData.hengPian[0] + circleData.hengPian[1]) / 2) < range) // 新加入数据在允许浮动范围之内，则新数据存入队列，删除一个老数据
         {
-            circleData.hengPian[0] = circleData.hengPian[1];    //数据前移，删除老数据
-            circleData.hengPian[1] = openmv[3];                 //更新本组数据
+            circleData.hengPian[0] = circleData.hengPian[1]; // 数据前移，删除老数据
+            circleData.hengPian[1] = openmv[3];              // 更新本组数据
             hengPian_flag = 1;
         }
         else
@@ -324,7 +371,7 @@ void DataCheck(uint8_t *openmv)
             hengPian_flag = 0;
         }
 
-        if (fabs(openmv[5] - (circleData.zongPian[0]+circleData.zongPian[1])/2) < range)
+        if (fabs(openmv[5] - (circleData.zongPian[0] + circleData.zongPian[1]) / 2) < range)
         {
             circleData.zongPian[0] = circleData.zongPian[1];
             circleData.zongPian[1] = openmv[3];
@@ -334,7 +381,6 @@ void DataCheck(uint8_t *openmv)
         {
             zongPian_flag = 0;
         }
-
     }
     else // 初始情况收集三组数据
     {
@@ -346,26 +392,25 @@ void DataCheck(uint8_t *openmv)
         if (circleData.length == 3) // 如果收集到三组数据，进行筛选操作
         {
             DataCheck_flag = 1; // 标志位计1，不再进入收集数据
-            
-            insertSort (circleData.hengPian);
-            insertSort (circleData.zongPian);
 
-            comparePiancha (circleData.hengPian);
-            comparePiancha (circleData.zongPian);
+            insertSort(circleData.hengPian);
+            insertSort(circleData.zongPian);
 
-            circleData.length--;    //剔除数据后，队列长度减一
+            comparePiancha(circleData.hengPian);
+            comparePiancha(circleData.zongPian);
+
+            circleData.length--; // 剔除数据后，队列长度减一
         }
     }
 }
-
 
 /*
     初始三组数据比较
 */
 void comparePiancha(uint8_t *piancha)
 {
-    if (fabs(piancha[0]-piancha[1]) > fabs(piancha[1]-piancha[2]))
-    //比较第一个和第三个数据与第二个数据的差距，去除大的那个，并填充队列，队列第三个数据置0
+    if (fabs(piancha[0] - piancha[1]) > fabs(piancha[1] - piancha[2]))
+    // 比较第一个和第三个数据与第二个数据的差距，去除大的那个，并填充队列，队列第三个数据置0
     {
         piancha[0] = piancha[1];
         piancha[1] = piancha[2];
@@ -386,11 +431,11 @@ void insertSort(uint8_t *arr)
     {
         for (uint8_t j = i - 1; j >= 0; j--)
         {
-            if (arr[j] > arr[j+1])
+            if (arr[j] > arr[j + 1])
             {
                 uint8_t temp = arr[j];
-                arr[j] = arr[j+1];
-                arr[j+1] = temp;
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
             }
             else
                 break;

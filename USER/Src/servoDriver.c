@@ -8,12 +8,11 @@
     机械臂舵机6，7    分别转动
 
 */
-
 // uint8_t  NowAngle_Cargo;
 // uint8_t  NowAngle_Paw;
-// uint8_t  NowAngle_LeftArm;
-// uint8_t  NowAngle_RightArm;
-// uint16_t NowAngle_Holder;
+uint8_t  NowAngle_LeftArm;
+uint8_t  NowAngle_RightArm;
+uint16_t NowAngle_Holder;
 
 uint8_t  CargoStatus_1;
 uint8_t  CargoStatus_2;
@@ -27,23 +26,30 @@ uint8_t cargo_flag=0;
 /*
     机械臂取放动作参数
 */
-ActionParameter Cargo1_ActionDown = {140, 65, 208, 1};    //1号货架放下动作参数
-ActionParameter Cargo1_ActionUp = {155, 28, 208, 1};      //1号货架抬起动作参数,下同
+ActionParameter Cargo1_ActionDown = {140, 65, 212, 1};    //1号货架放下动作参数
+ActionParameter Cargo1_ActionUp = {155, 24, 212, 1};      //1号货架抬起动作参数,下同
 
-ActionParameter Cargo2_ActionDown = {148, 61, 234, 2};
-ActionParameter Cargo2_ActionUp = {155, 27, 234, 2};
+ActionParameter Cargo2_ActionDown = {151, 55, 237, 2};
+ActionParameter Cargo2_ActionUp = {155, 24, 237, 2};
 
-ActionParameter Cargo3_ActionDown = {140, 70, 260, 3};
-ActionParameter Cargo3_ActionUp = {155, 28, 260, 3};
+ActionParameter Cargo3_ActionDown = {145, 65, 267, 3};
+ActionParameter Cargo3_ActionUp = {155, 24, 267, 3};
 
-ActionParameter Cargo1_FetchDown = {145, 58, 208, 1};
-ActionParameter Cargo1_FetchUp = {145, 35, 208, 1};
+ActionParameter Cargo1_FetchDown = {148, 53, 212, 1};
+ActionParameter Cargo1_FetchUp = {148, 27, 212, 1};
 
-ActionParameter Cargo2_FetchDown = {155, 51, 234, 2};
-ActionParameter Cargo2_FetchUp = {155, 27, 234, 2};
+ActionParameter Cargo2_FetchDown = {155, 42, 237, 2};
+ActionParameter Cargo2_FetchUp = {161, 24, 237, 2};
 
-ActionParameter Cargo3_FetchDown = {148, 56, 262, 3};
-ActionParameter Cargo3_FetchUp = {148, 32, 262, 3};
+ActionParameter Cargo3_FetchDown = {155, 48, 267, 3};
+ActionParameter Cargo3_FetchUp = {155, 26, 267, 3};
+
+/*
+    地面物料拿取、放置
+*/
+ActionParameter CargoRed_GroundDown =   {61, 139, 58, 1};
+ActionParameter CargoBlue_GroundDown =  {56, 122, 87, 3};
+ActionParameter CargoGreen_GroundDown = {56, 122, 25, 2};
 
 /*
     自由位置（过渡位置）freeAngle
@@ -57,15 +63,21 @@ ActionParameter freeAngle = {120, 65, 155, 0};
     leftarm：85
 
 */
-ActionParameter lineAngle = {125, 85, 57, 0};
+ActionParameter lineAngle = {120, 65, 60, 0};
 /*
     找圆位置circleAngle
+    108,74,58,0
+    95,55,58,0
+
 */
-ActionParameter circleAngle = {125, 65, 57, 0};
+ActionParameter circleAngle = {95, 55, 58, 0};
+
 /*
     扫码位置scanCodeAngle
 */
 ActionParameter scanCodeAngle = {};
+
+ActionParameter stageangle = {150,40, 60, 0};
 
 
 /*
@@ -79,7 +91,11 @@ ActionParameter scanCodeAngle = {};
 */
 void Servo_Init(void)
 {
+    NowAngle_Holder = circleAngle.holder;
+    NowAngle_RightArm = circleAngle.rightArm;
+    NowAngle_LeftArm = circleAngle.leftArm;
     ActionFunc (circleAngle);
+    
 
     CargoSet (CARGO_1, CARGO_SET);
     CargoSet(2, 1);
@@ -105,13 +121,36 @@ void Servo_Init(void)
     >> 更新角度nowAngle
 
 */
+void HolderSet(uint16_t angle)
+{
+    Servo5_Angle = (uint32_t)((angle*1.0/270.0)*HOLDER_FULL_ANGLE)+ZERO_ANGLE;
+}
 
 void HolderControl(uint16_t angle)
 {
+    uint8_t speed = 5;
     if(angle<=270)
     {
+        // if (NowAngle_Holder > angle)
+        // {
+        //     for (uint16_t angle_temp=NowAngle_Holder;angle_temp>=angle; angle_temp--)
+        //     {
+        //         HolderSet (angle_temp);
+        //         HAL_Delay (speed);
+        //     }
+        // }
+        // else 
+        // {
+        //     for (uint16_t angle_temp=angle;angle_temp<=NowAngle_Holder; angle_temp++)
+        //     {
+        //         HolderSet (angle_temp);
+        //         HAL_Delay (speed);
+        //     }
+        // }
+        
         Servo5_Angle = (uint32_t)((angle*1.0/270.0)*HOLDER_FULL_ANGLE)+ZERO_ANGLE;
-        //NowAngle_Holder = angle;
+        
+        NowAngle_Holder = angle;
     }
     else
         return;
@@ -122,7 +161,7 @@ void PawControl(uint8_t angle)
     if(angle<=180)
     {
         Servo4_Angle = (uint32_t)((angle*1.0/180.0)*PAW_FULL_ANGLE)+ZERO_ANGLE;
-        //NowAngle_Paw = angle;
+        // NowAngle_Paw = angle;
     }
     else
         return;
@@ -135,7 +174,7 @@ void LeftArmControl(uint8_t LeftAngle)
     {
         Servo6_Angle = (uint32_t)((LeftAngle*1.0/180.0)*ARM_FULL_ANGLE)+ZERO_ANGLE;
 
-        //NowAngle_LeftArm = LeftAngle;
+        NowAngle_LeftArm = LeftAngle;
     }
     else
         return;
@@ -147,7 +186,7 @@ void RightArmControl (uint8_t RightAngle)
     {
         Servo7_Angle = (uint32_t)((RightAngle*1.0/180.0)*ARM_FULL_ANGLE)+ZERO_ANGLE;
 
-        //NowAngle_RightArm = RightAngle;
+        NowAngle_RightArm = RightAngle;
     }
     else
         return;
@@ -178,7 +217,7 @@ void CargoSet(uint8_t Cargo_pos, uint8_t SetStatus)
             {
                 if (SetStatus == CARGO_SET)
                 {
-                    Servo1_Angle = (uint32_t)(CARGO_FULL_ANGLE+ZERO_ANGLE-50);
+                    Servo1_Angle = (uint32_t)(CARGO_FULL_ANGLE+ZERO_ANGLE);
                     CargoStatus_1 = SetStatus;
                 }
                 else if (SetStatus == CARGO_UNSET)
@@ -216,7 +255,7 @@ void CargoSet(uint8_t Cargo_pos, uint8_t SetStatus)
             {
                 if (SetStatus == CARGO_SET)
                 {
-                    Servo3_Angle = (uint32_t)(CARGO_FULL_ANGLE+ZERO_ANGLE-50);
+                    Servo3_Angle = (uint32_t)(CARGO_FULL_ANGLE+ZERO_ANGLE-40);
                     CargoStatus_3 = SetStatus;
                 }
                 else if (SetStatus == CARGO_UNSET)
@@ -266,7 +305,7 @@ void CargoAction (ActionParameter up, ActionParameter down)
     else if (up.cargoNo == 2 || up.cargoNo == 3)
     {
         RightArmControl (125);
-        LeftArmControl  (35);
+        LeftArmControl  (32);
     }
 
     CargoSet (up.cargoNo, 0);
@@ -289,7 +328,7 @@ void CargoAction (ActionParameter up, ActionParameter down)
     
     HAL_Delay (600);
 
-    PawControl (125);
+    PawControl (115);
 
     HAL_Delay  (400);
 
@@ -333,7 +372,7 @@ void CargoFetch (ActionParameter up, ActionParameter down)
 
     //转动到载物台
     HolderControl (up.holder);
-    PawControl (120);
+    PawControl (115);
     CargoSet (up.cargoNo, 0);
 
     HAL_Delay (800);
@@ -342,13 +381,13 @@ void CargoFetch (ActionParameter up, ActionParameter down)
 
     HAL_Delay (500);
 
-    PawControl (90);
+    PawControl (80);
 
     HAL_Delay (300);
 
     //调整移出角度
     RightArmControl (125);
-    LeftArmControl (35);
+    LeftArmControl (30);
 
     HAL_Delay (600);
     CargoSet (up.cargoNo, 1);
@@ -360,8 +399,12 @@ void CargoFetch (ActionParameter up, ActionParameter down)
 
 }
 
+/*
+    1 red
+    2 green
+    3 blue
 
-//原料区拿起放到车上
+*/
 void PickCargo_Yuanliao (uint8_t color)
 {
     //这里应该有一个拿起的函数
@@ -379,9 +422,160 @@ void PickCargo_Yuanliao (uint8_t color)
     }
 }
 
-void PickCargo_Ground(uint8_t color)
+/*
+    拿起地上的物料函数
+*/
+void PickCargo_Ground(ActionParameter down)
 {
-    return ;
+    //找圆角度
+    ActionFunc (circleAngle);
+
+    HAL_Delay (1000);
+
+    //转动舵机
+    if (down.cargoNo != 1)  //红色物料区域不需要转动云台
+    {
+        HolderControl (down.holder);
+        HAL_Delay (600);
+    }
+
+    //打开抓夹，回缩大臂
+    PawControl (120);
+    LeftArmControl (down.leftArm);
+
+    HAL_Delay (700);
+
+    //放下大臂
+    RightArmControl (down.rightArm);
     
+    HAL_Delay (600);
+
+    //抓取
+    PawControl (80);
+
+    HAL_Delay (500);
+
+    LeftArmControl (118);   //118
+    RightArmControl (100); //100
+
+    HAL_Delay (600);
+
+    //放置到载物台
+    switch (down.cargoNo)
+    {
+        case 1: //red
+            CargoAction (Cargo1_ActionUp, Cargo1_ActionDown);
+            break;
+        case 2:
+            CargoAction (Cargo2_ActionUp, Cargo2_ActionDown);
+            break;
+        case 3:
+            CargoAction (Cargo3_ActionUp, Cargo3_ActionDown);
+            break;
+    }
+
+    HAL_Delay (800);
 }
+
+void DisposeCargo_Ground(ActionParameter down)
+{
+    ActionFunc (freeAngle);
+
+    //从载物台上拿到物块
+    switch (down.cargoNo)
+    {
+        case 1:
+            CargoFetch (Cargo1_FetchUp, Cargo1_FetchDown);
+            break;
+        case 2:
+            CargoFetch (Cargo2_FetchUp, Cargo2_FetchDown);
+            break;
+        case 3:
+            CargoFetch (Cargo3_FetchUp, Cargo3_FetchDown);
+            break;
+    }
+
+    HAL_Delay (1200);
+    
+    //移动到放置点上方
+    HolderControl (down.holder);
+
+    HAL_Delay (800);
+
+    //放下物块
+    RightArmControl (down.rightArm);
+    LeftArmControl (down.leftArm);
+
+    HAL_Delay (500);
+
+    //打开抓夹
+    PawControl (120);
+
+    HAL_Delay (400);
+
+    //先上抬机械臂
+    LeftArmControl (118);   //118
+    RightArmControl (100); //100
+
+    HAL_Delay (600);
+
+    //回到找圆的姿势
+    RightArmControl (circleAngle.rightArm);
+    LeftArmControl  (circleAngle.leftArm);
+    PawControl (90);
+
+    HAL_Delay (500);
+
+    //云台回归
+    HolderControl (down.holder);
+
+    HAL_Delay (800);
+}
+
+/*
+    抓取逻辑
+*/
+void PickCargo_Logic(void)
+{
+    for (uint8_t i = 0; i < 3; i++)
+    {
+        switch (Assignment[i])
+        {
+            case 1:
+                PickCargo_Ground (CargoRed_GroundDown);
+                break;
+            case 2:
+                PickCargo_Ground (CargoGreen_GroundDown);
+                break;
+            case 3:
+                PickCargo_Ground(CargoBlue_GroundDown);
+                break;
+        }
+    }
+}
+
+/*
+    放置逻辑
+*/
+void DisposeCargo_Logic(void)
+{
+    for (uint8_t i = 0; i < 3; i++)
+    {
+        switch (Assignment[i])
+        {
+            case 1:
+                DisposeCargo_Ground (CargoRed_GroundDown);
+                break;
+            case 2:
+                DisposeCargo_Ground (CargoGreen_GroundDown);
+                break;
+            case 3:
+                DisposeCargo_Ground(CargoBlue_GroundDown);
+                break;
+        }
+    }
+}
+
+
+
 

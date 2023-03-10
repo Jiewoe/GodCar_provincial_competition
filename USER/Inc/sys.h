@@ -6,6 +6,8 @@
 //openmv1 下面的 usart 2
 //opemmv2 前面的 usart 3
 void Procedure_Setting(uint8_t now);
+void showCase(void);
+int filter(int a, int YuZhi);
 
 extern uint8_t round1;
 extern uint8_t round2;
@@ -37,6 +39,7 @@ extern DMA_HandleTypeDef hdma_usart1_tx;
 extern DMA_HandleTypeDef hdma_usart2_tx;
 
 extern uint8_t target;
+extern uint8_t IF_OUT;
 extern uint8_t left_target;
 extern uint8_t right_target;
 
@@ -80,6 +83,7 @@ extern uint8_t procedure;
 extern uint8_t IF_MOVE;
 extern uint8_t IF_LINE;
 extern uint8_t IF_CIRCLE;
+extern uint8_t IF_FINISHLINE;
 extern uint8_t Assignment[6];
 
 

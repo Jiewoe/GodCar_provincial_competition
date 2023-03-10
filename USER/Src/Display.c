@@ -4,6 +4,7 @@
 
 void DisPlay_Init()
 {
+    ClearBuffer (Display_Buffer);
     __HAL_UART_ENABLE_IT(&huart4, UART_IT_IDLE);       // 使能IDLE中断
     HAL_UART_Receive_DMA(&huart4, Display_Buffer, 64); // 开启串口DMA接收
 }
@@ -89,37 +90,73 @@ void DisPlay_Porcess(uint8_t *buffer)
             }
             if (buffer[6] == 3)
             {
-                target = 200;
+                procedure = 1;
             }
         }
         // 4号屏幕
         if (buffer[4] == 0x04)
         {
+
             if (buffer[6] == 0x01 && buffer[9]== 00)
             {
-                // blue
-                FCircle[2] = 0x01;
-                HAL_UART_Transmit(&huart2, FCircle, 7, 0x00ff);
+                cargo_flag = 7;
             }
             else if (buffer[6] == 0x02&&buffer[9]== 00)
             {
-                // red
-                FCircle[2] = 0x02;
-                HAL_UART_Transmit(&huart2, FCircle, 7, 0x00ff);
+                cargo_flag = 8;
             }
             else if (buffer[6] == 0x03&&buffer[9]== 00)
             {
-                // green
-                FCircle[2] = 0x03;
-                HAL_UART_Transmit(&huart2, FCircle, 7, 0x00ff);
+                cargo_flag = 9;
             }
+
+
+            else if (buffer[6] == 0x04 && buffer[9] == 0)
+            {
+                IF_CIRCLE = 1;
+                ActionFunc (circleAngle);
+                
+                HAL_UART_Transmit (&huart2, FCircle, 7, 0x00ff);
+            }
+            else if (buffer[6] == 0x05 && buffer[9] == 0)
+            {
+                IF_LINE = 1;
+                ActionFunc (lineAngle);
+
+                HAL_UART_Transmit(&huart2, SLine, 7, 0x00ff);
+            }
+            else if (buffer[6] == 0x06 && buffer[9] == 0)
+            {
+                PawControl (120);
+
+                HAL_UART_Transmit (&huart3, SCode, 7, 0x00ff);
+            }
+            else if (buffer[6] == 0x07 && buffer[9] == 0)
+            {
+                cargo_flag = 11;
+                IF_CIRCLE=1;
+                ActionFunc(stageangle);
+                HAL_UART_Transmit (&huart2, Smaterial, 7, 0x00ff);
+                //HAL_UART_Transmit (&huart2, FCircle, 7, 0x00ff);
+            }
+            else if (buffer[6] == 0x08 && buffer[9] == 0)
+            {
+                cargo_flag = 12;
+                //HAL_UART_Transmit (&huart2, FCircle, 7, 0x00ff);
+            }
+
+
+
+
+
             else if (buffer[6] == 0x09&&buffer[9]== 00)
             {
-                FCircle[2] = 0x08;
-                HAL_UART_Transmit(&huart2, FCircle, 7, 0x00ff);
+                HAL_UART_Transmit (&huart3, Stop, 7, 0x00ff);
+                HAL_UART_Transmit (&huart2, Stop, 7, 0x00ff);
             }
             
         }
+        
     }
 }
 
@@ -143,10 +180,42 @@ void ShowAssignmentCode(uint8_t *openmv)
     Assignment[0] = AssignmentCode[7] = openmv[2] / 10;
     Assignment[1] = AssignmentCode[8] = openmv[2] % 10;
     Assignment[2] = AssignmentCode[9] = openmv[3] / 10;
-    AssignmentCode[10] = '+';
+    AssignmentCode[10] = '+'-'0';
     Assignment[3] = AssignmentCode[11] = openmv[3] % 10;
     Assignment[4] = AssignmentCode[12] = openmv[4] / 10;
     Assignment[5] = AssignmentCode[13] = openmv[4] % 10;
 
+    for (int i=7; i<14; i++)
+    {
+        AssignmentCode [i] += '0';
+    }
+
     HAL_UART_Transmit(&huart4, AssignmentCode, 18, 0x00ff);
+}
+
+void showCase(void)
+{
+    uint8_t changePage[9] = {0xEE, 0xB1, 00, 00, 05, 0xFF, 0xFC, 0xFF, 0xFF};
+    HAL_UART_Transmit(&huart4, changePage, 9, 0x00ff);
+
+
+    if (procedure < 10)
+    {
+        uint8_t message1[12] = {0xEE, 0xB1, 0x10, 0x00, 0x05, 00, 01, 0x00, 0xFF, 0xFC, 0xFF, 0xFF};
+
+        message1[7] = procedure +'0';
+
+        HAL_UART_Transmit (&huart4, message1, 12, 0x00ff);
+    }
+    else if (procedure >= 10 && procedure < 20)
+    {
+        uint8_t message2[13] = {0xEE, 0xB1, 0x10, 0x00, 0x05, 00, 01, 0x00, 0x00, 0xFF, 0xFC, 0xFF, 0xFF};
+
+        message2[7] = (procedure)/10 +'0';
+        message2[8] = (procedure)%10 +'0';
+        HAL_UART_Transmit (&huart4, message2, 13, 0x00ff);
+    }
+    
+
+    
 }

@@ -2,6 +2,7 @@
 #define __SERVO_DRIVER_H__
 
 #include "stm32h7xx_hal.h"
+#include "sys.h"
 
 //计数器最大值
 #define TIM5_ARR  19999
@@ -112,9 +113,16 @@ extern ActionParameter Cargo2_FetchUp;
 extern ActionParameter Cargo3_FetchDown;
 extern ActionParameter Cargo3_FetchUp;
 
+extern ActionParameter CargoRed_GroundDown;
+extern ActionParameter CargoBlue_GroundDown;
+extern ActionParameter CargoGreen_GroundDown;
+
 extern ActionParameter freeAngle;
 extern ActionParameter lineAngle;
 extern ActionParameter circleAngle;
+extern ActionParameter scanCodeAngle;
+
+extern ActionParameter stageangle;
 
 extern TIM_HandleTypeDef htim5;
 extern TIM_HandleTypeDef htim12;
@@ -142,16 +150,15 @@ void CargoSet(uint8_t Cargo_pos, uint8_t SetStatus);
 void CargoAction (ActionParameter up, ActionParameter down);
 void CargoFetch(ActionParameter up, ActionParameter down);
 void PickCargo_Yuanliao (uint8_t color);
-void PickCargo_Ground(uint8_t color);
+void PickCargo_Ground(ActionParameter down);
 void ActionFunc(ActionParameter angle);
-
+void PickCargo_Logic(void);
+void DisposeCargo_Logic(void);
+void DisposeCargo_Ground(ActionParameter down);
 /*
     1---红色
     2---绿色
     3---蓝色
-
-
-
 */
 
 #endif
