@@ -54,58 +54,79 @@ void Procedure_Setting(uint8_t now)
 
     // 扫码
     case 2:
-
-        
         HAL_UART_Transmit(&huart2, Stop, 7, 0x00ff); // 停止巡线
         Move_Stop();
         HAL_Delay(600);
-
-
 
         // ActionFunc (scanCodeAngle);   //扫码角度，未设置
 
         // 提示2号openmv开始扫码
         HAL_Delay(600);
-        // HAL_UART_Transmit (&huart3, SCode, 7, 0x00ff);
+        PawControl (180);
+        HAL_UART_Transmit (&huart3, SCode, 7, 0x00ff);
+        
         // 测试代码
-        procedure++;
         // 实际：显示任务码后自动procedure++
 
         break;
 
-    // 移动到原料区(圆盘)
+    // 移动到圆盘前20cm
     case 3:
+        HAL_UART_Transmit(&huart3, Stop, 7, 0x00ff);
         HAL_Delay(1000);
-
-        // HAL_UART_Transmit (&huart2, SLine, 7, 0x00ff);  //开启巡线
+        ActionFunc (specialLineAngle);
+        HAL_UART_Transmit(&huart2, SLine, 7, 0x00ff); // 开启巡线
 
         // HAL_Delay (1200);
-        target = materialDistance;
+        target = materialDistance - 20;
         IF_MOVE = 1;
 
         break;
 
-    // 原料区装货
+    // 停止找线，向前移动20cm
     case 4:
-        HAL_Delay(2000); // 用找线的方式控制车的横向位置，这里时间长一点
-        ActionFunc(stageangle);
-        // MV_StopSearchLine ();       //停止巡线
-        // openmv2操作
-
-        HAL_UART_Transmit(&huart2, Smaterial, 7, 0xff);
-        IF_CIRCLE = 1; // 执行定位原料区
-
-        // ActionFunc (lineAngle);
-        // HAL_Delay (800);
-        // HAL_UART_Transmit (&huart2, SLine, 7, 0x00ff);  //开启巡线
-        // HAL_Delay (1200);
-
-        // 在movemrico里给了进行下一步的指令
-        // procedure++;
+        HAL_UART_Transmit(&huart2, Stop, 7, 0x00ff);
+        Move_Stop();
+        target = 20;
+        IF_MOVE = 1;
         break;
 
-    //移动到第一个拐角
+    // 寻找原料区域
     case 5:
+        ActionFunc(stageangle);
+        HAL_UART_Transmit(&huart2, Smaterial, 7, 0xff);
+        IF_CIRCLE = 1;
+        break;
+    //停好车
+    case 6:
+        HAL_UART_Transmit(&huart2, Stop, 7, 0x00ff);
+        Move_Stop();
+
+        break;
+    case 7:
+
+        // 原料区装货
+
+    case 8:
+        // //HAL_Delay(2000); // 用找线的方式控制车的横向位置，这里时间长一点
+        //
+        // // MV_StopSearchLine ();       //停止巡线
+        // // openmv2操作
+
+        // HAL_UART_Transmit(&huart2, Smaterial, 7, 0xff);
+        // IF_CIRCLE = 1; // 执行定位原料区
+
+        // // ActionFunc (lineAngle);
+        // // HAL_Delay (800);
+        // // HAL_UART_Transmit (&huart2, SLine, 7, 0x00ff);  //开启巡线
+        // // HAL_Delay (1200);
+
+        // // 在movemrico里给了进行下一步的指令
+        // // procedure++;
+        break;
+
+    // 移动到第一个拐角
+    case 9:
         // 停止找原料区
         HAL_UART_Transmit(&huart2, Stop, 7, 0x00ff);
         ActionFunc(lineAngle);
@@ -122,7 +143,7 @@ void Procedure_Setting(uint8_t now)
         break;
 
     // 转弯
-    case 6:
+    case 10:
         IF_LINE = 0; // 手动关闭标志位
 
         Move_Turnleft(); // 左转
@@ -133,14 +154,14 @@ void Procedure_Setting(uint8_t now)
         break;
 
     // 移动到粗加工区
-    case 7:
+    case 11:
         HAL_Delay(1200);
         target = 100; // 拐角到粗加工区的距离
         IF_MOVE = 1;
         break;
 
     // 粗加工区，调整位置
-    case 8:
+    case 12:
         // 机械臂动作
         MV_StopSearchLine(); // 停止巡线
         IF_FINISHLINE = 1;
@@ -154,7 +175,7 @@ void Procedure_Setting(uint8_t now)
         break;
 
     // 放置物料
-    case 9:
+    case 13:
         HAL_UART_Transmit(&huart2, Stop, 7, 0xff);
         // DisposeCargo_Logic ();
 
@@ -170,7 +191,7 @@ void Procedure_Setting(uint8_t now)
         break;
 
     // 移动到第二个拐角
-    case 10:
+    case 14:
         HAL_UART_Transmit(&huart2, SLine, 7, 0x00ff); // 开启巡线
         HAL_Delay(1200);
         target = 103;
@@ -178,7 +199,7 @@ void Procedure_Setting(uint8_t now)
         break;
 
     // 转弯
-    case 11:
+    case 15:
         HAL_Delay(500);
 
         MV_StopSearchLine(); // 停止巡线
@@ -188,7 +209,7 @@ void Procedure_Setting(uint8_t now)
         break;
 
     // 到达精加工区
-    case 12:
+    case 16:
         HAL_Delay(500);
 
         ActionFunc(lineAngle);
@@ -204,7 +225,7 @@ void Procedure_Setting(uint8_t now)
         break;
 
     // 精加工区,调整位置
-    case 13:
+    case 17:
         HAL_Delay(600);
         MV_StopSearchLine(); // 停止巡线
         IF_FINISHLINE = 1;
@@ -218,7 +239,7 @@ void Procedure_Setting(uint8_t now)
         break;
 
     // 精加工区，放置物品
-    case 14:
+    case 18:
         HAL_Delay(1000);
         HAL_Delay(500);
         // DisposeCargo_Logic ();  //放置物块
@@ -235,14 +256,14 @@ void Procedure_Setting(uint8_t now)
         break;
 
     // 到第三个拐角
-    case 15:
+    case 19:
         HAL_Delay(500);
         target = 100;
         IF_MOVE = 1;
         break;
 
     // 转弯
-    case 16:
+    case 20:
         HAL_Delay(500);
         MV_StopSearchLine(); // 停止巡线
 
@@ -251,7 +272,7 @@ void Procedure_Setting(uint8_t now)
         break;
 
     // 回到出发点
-    case 17:
+    case 21:
         HAL_Delay(2000);
 
         ActionFunc(lineAngle);

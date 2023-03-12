@@ -158,7 +158,7 @@ void Lateral_correction(uint8_t sign, uint8_t piancha, uint8_t sign2, uint8_t he
         sign2 = 1;
         hengPia = 120 - hengPia;
     }
-    if (piancha > 3)
+    if (piancha > 2)
     {
         
         if (sign == 0) // 整车左偏
@@ -176,7 +176,7 @@ void Lateral_correction(uint8_t sign, uint8_t piancha, uint8_t sign2, uint8_t he
             Motor3_Speed = 6000 - rotate_speed;
         }
     }
-    if (piancha < 3)
+    if (piancha < 2)
     {
         HAL_GPIO_WritePin(Motor_GPIO, Motor1_Pin, GPIO_PIN_SET);
         HAL_GPIO_WritePin(Motor_GPIO, Motor3_Pin, GPIO_PIN_RESET);
@@ -224,10 +224,10 @@ void Lateral_correction(uint8_t sign, uint8_t piancha, uint8_t sign2, uint8_t he
 */
 void MOVE_MV_micro(uint8_t symheng, uint8_t heng, uint8_t symzong, uint8_t zong)
 {
-    uint16_t speed = 780;
+    uint16_t speed = 900;
     if (IF_CIRCLE != 1) //置1是执行
         return;
-    if (heng > 12)
+    if (heng > 8)
     {
         if (symheng == 0)
         {
@@ -251,7 +251,7 @@ void MOVE_MV_micro(uint8_t symheng, uint8_t heng, uint8_t symzong, uint8_t zong)
         Motor2_Speed = 0;
         Motor4_Speed = 0;
     }
-    if (zong > 12) // 阈值调整
+    if (zong > 8) // 阈值调整
     {
         if (symzong == 1)
         {
@@ -275,7 +275,7 @@ void MOVE_MV_micro(uint8_t symheng, uint8_t heng, uint8_t symzong, uint8_t zong)
         Motor1_Speed = 0;
         Motor3_Speed = 0;
     }
-    if (heng < 12 && zong < 12)
+    if (heng < 8 && zong < 8)
     {
         Move_Stop();
         IF_CIRCLE = 0;

@@ -55,6 +55,7 @@ void DisPlay_Porcess(uint8_t *buffer)
             {
             case 0x01:
                 cargo_flag = 1;
+                // ActionFunc (CargoGreen_GroundDown);
                 break;
             case 0x02:
                 cargo_flag = 2;
@@ -63,13 +64,16 @@ void DisPlay_Porcess(uint8_t *buffer)
                 cargo_flag = 3;
                 break;
             case 0x04:
-                cargo_flag = 4; 
+                // cargo_flag = 4; 
+                ActionFunc (Cargo1_ActionDown);
                 break;
             case 0x05:
-                cargo_flag = 5;
+                // cargo_flag = 5;
+                ActionFunc (Cargo2_ActionDown);
                 break;
             case 0x06:
-                cargo_flag = 6;
+                // cargo_flag = 6;
+                // ActionFunc ()
                 break;
             default:
                 cargo_flag = 0;
@@ -86,7 +90,7 @@ void DisPlay_Porcess(uint8_t *buffer)
             }
             if (buffer[6] == 0x02) // 抓夹关闭，角度为90
             {
-                PawControl(90);
+                PawControl(85);
             }
             if (buffer[6] == 3)
             {
@@ -99,15 +103,18 @@ void DisPlay_Porcess(uint8_t *buffer)
 
             if (buffer[6] == 0x01 && buffer[9]== 00)
             {
-                cargo_flag = 7;
+                HAL_UART_Transmit(&huart3, Swuliao, 7, 0xff);
+                // cargo_flag = 10;
+                // ActionFunc (CargoRed_GroundDown);
             }
             else if (buffer[6] == 0x02&&buffer[9]== 00)
             {
-                cargo_flag = 8;
+                ActionFunc(waitAngle);
+                // cargo_flag = 11;
             }
             else if (buffer[6] == 0x03&&buffer[9]== 00)
             {
-                cargo_flag = 9;
+                // cargo_flag = 12;
             }
 
 
@@ -121,7 +128,7 @@ void DisPlay_Porcess(uint8_t *buffer)
             else if (buffer[6] == 0x05 && buffer[9] == 0)
             {
                 IF_LINE = 1;
-                ActionFunc (lineAngle);
+                ActionFunc (specialLineAngle);
 
                 HAL_UART_Transmit(&huart2, SLine, 7, 0x00ff);
             }
@@ -133,7 +140,7 @@ void DisPlay_Porcess(uint8_t *buffer)
             }
             else if (buffer[6] == 0x07 && buffer[9] == 0)
             {
-                cargo_flag = 11;
+                // cargo_flag = 11;
                 IF_CIRCLE=1;
                 ActionFunc(stageangle);
                 HAL_UART_Transmit (&huart2, Smaterial, 7, 0x00ff);
@@ -141,7 +148,7 @@ void DisPlay_Porcess(uint8_t *buffer)
             }
             else if (buffer[6] == 0x08 && buffer[9] == 0)
             {
-                cargo_flag = 12;
+                cargo_flag = 12;    
                 //HAL_UART_Transmit (&huart2, FCircle, 7, 0x00ff);
             }
 

@@ -20,6 +20,7 @@ extern const uint8_t FCircle[7];
 extern const uint8_t Stop[7];
 extern const uint8_t SCode[7];
 extern const uint8_t Smaterial[7];
+extern const uint8_t Swuliao[7];
 
 
 

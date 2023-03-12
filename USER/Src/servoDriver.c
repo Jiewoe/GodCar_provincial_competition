@@ -26,30 +26,30 @@ uint8_t cargo_flag=0;
 /*
     机械臂取放动作参数
 */
-ActionParameter Cargo1_ActionDown = {140, 65, 212, 1};    //1号货架放下动作参数
-ActionParameter Cargo1_ActionUp = {155, 24, 212, 1};      //1号货架抬起动作参数,下同
+ActionParameter Cargo1_ActionDown = {147, 52, 210, 1};    //1号货架放下动作参数
+ActionParameter Cargo1_ActionUp = {155, 24, 210 , 1};      //1号货架抬起动作参数,下同
 
-ActionParameter Cargo2_ActionDown = {151, 55, 237, 2};
+ActionParameter Cargo2_ActionDown = {155, 48, 237, 2};
 ActionParameter Cargo2_ActionUp = {155, 24, 237, 2};
 
 ActionParameter Cargo3_ActionDown = {145, 65, 267, 3};
 ActionParameter Cargo3_ActionUp = {155, 24, 267, 3};
 
-ActionParameter Cargo1_FetchDown = {148, 53, 212, 1};
-ActionParameter Cargo1_FetchUp = {148, 27, 212, 1};
+ActionParameter Cargo1_FetchDown = {150, 47, 208, 1};
+ActionParameter Cargo1_FetchUp = {153, 25, 208, 1};
 
-ActionParameter Cargo2_FetchDown = {155, 42, 237, 2};
-ActionParameter Cargo2_FetchUp = {161, 24, 237, 2};
+ActionParameter Cargo2_FetchDown = {165, 39, 235, 2};
+ActionParameter Cargo2_FetchUp = {163, 20, 235, 2};
 
-ActionParameter Cargo3_FetchDown = {155, 48, 267, 3};
-ActionParameter Cargo3_FetchUp = {155, 26, 267, 3};
+ActionParameter Cargo3_FetchDown = {155, 48, 266, 3};
+ActionParameter Cargo3_FetchUp = {155, 26, 266, 3};
 
 /*
     地面物料拿取、放置
 */
-ActionParameter CargoRed_GroundDown =   {61, 139, 58, 1};
-ActionParameter CargoBlue_GroundDown =  {56, 122, 87, 3};
-ActionParameter CargoGreen_GroundDown = {56, 122, 25, 2};
+ActionParameter CargoRed_GroundDown =   {65, 120, 23, 1};
+ActionParameter CargoBlue_GroundDown =  {55, 118, 87, 3};
+ActionParameter CargoGreen_GroundDown = {52, 142, 54, 2};
 
 /*
     自由位置（过渡位置）freeAngle
@@ -63,7 +63,7 @@ ActionParameter freeAngle = {120, 65, 155, 0};
     leftarm：85
 
 */
-ActionParameter lineAngle = {120, 65, 60, 0};
+ActionParameter lineAngle = {120, 65, 58, 0};
 /*
     找圆位置circleAngle
     108,74,58,0
@@ -77,8 +77,27 @@ ActionParameter circleAngle = {95, 55, 58, 0};
 */
 ActionParameter scanCodeAngle = {};
 
-ActionParameter stageangle = {150,40, 60, 0};
+/*
+    圆盘位置识别角度
+*/
+ActionParameter stageangle = {135,46, 58, 0};
 
+/*
+    圆盘抓取角度
+*/
+ActionParameter materialAngle = {97, 112, 58, 0};
+
+/*
+    特殊找线角度
+*/
+ActionParameter specialLineAngle = {107, 56, 58, 0};
+/*
+    等待抓取物块角度
+
+    水平等待角度 right 135， left 115
+    垂直等待角度 right 142  left  55
+*/
+ActionParameter waitAngle = {135, 115, 58, 0};
 
 /*
 
@@ -378,6 +397,7 @@ void CargoFetch (ActionParameter up, ActionParameter down)
     HAL_Delay (800);
 
     LeftArmControl (down.leftArm);
+    RightArmControl (down.rightArm);
 
     HAL_Delay (500);
 
@@ -506,12 +526,19 @@ void DisposeCargo_Ground(ActionParameter down)
     RightArmControl (down.rightArm);
     LeftArmControl (down.leftArm);
 
-    HAL_Delay (500);
+    HAL_Delay (1500);
 
     //打开抓夹
     PawControl (120);
 
     HAL_Delay (400);
+
+    if (down.cargoNo == 2)
+    {
+        LeftArmControl (151);
+        RightArmControl (80);
+        HAL_Delay (600);
+    }
 
     //先上抬机械臂
     LeftArmControl (118);   //118

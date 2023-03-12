@@ -201,6 +201,7 @@ int main(void)
             {
                 CargoFetch (Cargo2_FetchUp, Cargo2_FetchDown);
                 cargo_flag = 0;
+                
             }
             else if (cargo_flag == 6)
             {
@@ -224,23 +225,22 @@ int main(void)
             }
             else if (cargo_flag == 10)
             {
-                PickCargo_Logic ();
+                DisposeCargo_Ground(CargoRed_GroundDown);
                 cargo_flag = 0;
             }
             else if (cargo_flag == 11)
             {
-                //DisposeCargo_Logic ();
+                DisposeCargo_Ground (CargoBlue_GroundDown);
                 cargo_flag = 0;
             }
             else if (cargo_flag == 12)
             {
-                // ActionFunc (CargoRed_GroundDown);
-                DisposeCargo_Ground(CargoRed_GroundDown);
+                DisposeCargo_Ground(CargoGreen_GroundDown);
                 cargo_flag = 0;
             }
         }
 
-        Procedure_Setting (procedure);
+        // Procedure_Setting (procedure);
         // printCnt();
     }
 

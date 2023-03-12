@@ -123,6 +123,9 @@ extern ActionParameter circleAngle;
 extern ActionParameter scanCodeAngle;
 
 extern ActionParameter stageangle;
+extern ActionParameter specialLineAngle;
+extern ActionParameter materialAngle;
+extern ActionParameter waitAngle;
 
 extern TIM_HandleTypeDef htim5;
 extern TIM_HandleTypeDef htim12;
