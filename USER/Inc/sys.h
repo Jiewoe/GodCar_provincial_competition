@@ -38,10 +38,11 @@ extern UART_HandleTypeDef huart6;
 extern DMA_HandleTypeDef hdma_usart1_tx;
 extern DMA_HandleTypeDef hdma_usart2_tx;
 
-extern uint8_t target;
-extern uint8_t IF_OUT;
+extern volatile uint8_t target;
+extern volatile uint8_t IF_OUT;
 extern uint8_t left_target;
 extern uint8_t right_target;
+extern uint8_t colorflag;
 
 typedef struct 
 {
@@ -79,12 +80,13 @@ extern Queue circleData;
 
 
 //状态控制
-extern uint8_t procedure;
-extern uint8_t IF_MOVE;
-extern uint8_t IF_LINE;
-extern uint8_t IF_CIRCLE;
-extern uint8_t IF_FINISHLINE;
+extern volatile uint8_t procedure;
+extern volatile uint8_t IF_MOVE;
+extern volatile uint8_t IF_LINE;
+extern volatile uint8_t IF_CIRCLE;
+extern volatile uint8_t CLEARFLAG;
 extern uint8_t Assignment[6];
+extern uint8_t boardcolor[6];
 
 
 //定时器改名字

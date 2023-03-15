@@ -149,10 +149,10 @@ int main(void)
     
     DisPlay_Init();
 
-    HAL_UART_Receive_IT (&huart1, testBuffer, testLen);
-    Assignment[0] = 2;
-    Assignment[1] = 1;
-    Assignment[2] = 3;
+    // HAL_UART_Receive_IT (&huart1, testBuffer, testLen);
+    // Assignment[0] = 2;
+    // Assignment[1] = 1;
+    // Assignment[2] = 3;
 
     //HAL_Delay (6000);
 
@@ -166,15 +166,22 @@ int main(void)
   
     while (1)
     {
+       if (CLEARFLAG == 1 && IF_LINE == 1)
+       {
+           Move_Stop ();
+           CLEARFLAG = 0;
+       }
+
         if (IF_MOVE == 1 && IF_LINE == 1) //IF_MOVE == 1 并且 �?始循�? 前进
         {
             Move_Forward ();
         }
 
-//        if (IF_OUT = 1)
-//        {
-//            Move_Out ();
-//        }
+        if (Pick_ins == 1)
+        {
+            PickCargo_Yuanliao(Swuliao[2]);
+            Pick_ins = 0;
+        }
         //一下全是cargoset
         {
             if (cargo_flag == 1)
@@ -240,7 +247,7 @@ int main(void)
             }
         }
 
-        // Procedure_Setting (procedure);
+        Procedure_Setting (procedure);
         // printCnt();
     }
 
@@ -370,12 +377,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-        if (huart == &huart5)
-        {
-            printf ("%f\n%f\n%f\n\n", ang1.Pitch,ang1.Roll, ang1.Yaw);
-            JY60_Message_Pross(DMARecieveBuffer_JY60, &acce1, &angv1, &ang1);
-            //HAL_UART_Receive_DMA(&huart5, DMARecieveBuffer_JY60, 11);
-        }
+        // if (huart == &huart5)
+        // {
+        //     printf ("%f\n%f\n%f\n\n", ang1.Pitch,ang1.Roll, ang1.Yaw);
+        //     JY60_Message_Pross(DMARecieveBuffer_JY60, &acce1, &angv1, &ang1);
+        //     //HAL_UART_Receive_DMA(&huart5, DMARecieveBuffer_JY60, 11);
+        // }
         if (huart == & huart2) 
         {
             

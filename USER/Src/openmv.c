@@ -5,7 +5,10 @@ const uint8_t FCircle[7] = {0x7B, 0x01, 0, 0, 0, 0, 0x7C};
 const uint8_t SCode[7] = {0x7B, 0x03, 0, 0, 0, 0, 0x7C};
 const uint8_t Stop[7] = {0x7B, 0x07, 0, 0, 0, 0, 0x7C};
 const uint8_t Smaterial[7] = {0x7B, 0x09, 0, 0, 0, 0, 0x7C};
-const uint8_t Swuliao[7] = {0x7B, 0x04, 0, 0, 0, 0, 0x7C};
+uint8_t Swuliao[7] = {0x7B, 0x04, 0, 0, 0, 0, 0x7C};
+const uint8_t Flocation[7] = {0x7B, 0x11, 0, 0, 0, 0, 0x7C};
+const uint8_t Tellcolor[7] = {0x7B, 0x12, 0, 0, 0, 0, 0x7C};
+uint8_t Pick_ins = 0;
 
 void openmv_Init(void)
 {
@@ -42,6 +45,7 @@ void MV_DataProcess1(uint8_t *openmv)
         MOVE_MV_micro(openmv[2], openmv[3], openmv[4], openmv[5]); // 矫正程序
         HAL_UART_Transmit(&huart1, openmv, 7, 0xff);
     }
+
     else if (openmv[1] == 0x06) // 未找到圆，返回错误信息
     {
         Move_Stop();
@@ -51,15 +55,25 @@ void MV_DataProcess1(uint8_t *openmv)
     else if (openmv[1] == 0x02) // 开始巡线
     {
         HAL_UART_Transmit(&huart1, openmv, 7, 0xff);
-        MV_filter_Process(openmv, 8);                                   // 滤波
+        MV_filter_Process(openmv, 5);                                   // 滤波
         Lateral_correction(openmv[2], openmv[3], openmv[4], openmv[5]); // 巡线矫正
     }
 
     else if (openmv[1] == 0x09) // 找原料区
     {
-        MV_filter_Process(openmv, 15);             // 滤波
+        MV_filter_Process(openmv, 15); // 滤波
+
         MOVE_MV_micro(openmv[2], openmv[3], 0, 0); // 矫正程序
         HAL_UART_Transmit(&huart1, openmv, 7, 0xff);
+    }
+
+    else if (openmv[1] == 0x11)
+    {
+        Servo_process(openmv[2], openmv[3], openmv[4], openmv[5]);
+    }
+    else if (openmv[1] == 0x12)
+    {
+        MV_Tellcolor(openmv);
     }
 
     HAL_UART_Receive_IT(&huart2, openmv1, 7);
@@ -71,12 +85,15 @@ void MV_DataProcess2(uint8_t *openmv)
         return;
     if (openmv[1] == 0x03)
     {
-        ShowAssignmentCode(openmv); // 显示任务码
-        procedure++;
+        if (procedure == 3)
+        {
+            ShowAssignmentCode(openmv); // 显示任务码
+            procedure++;
+        }
     }
     else if (openmv[1] == 0x04) // 发送抓取信息
     {
-        PickCargo_Yuanliao(openmv[5]);
+        Pick_ins = 1;
     }
 
     HAL_UART_Receive_IT(&huart3, openmv2, 7);
@@ -176,4 +193,12 @@ void MV_StopSearchLine(void)
     HAL_UART_Transmit(&huart2, Stop, 7, 0x00ff);
     Move_Stop();
     IF_LINE = 0;
+}
+
+// openmv 返回颜色的处理函数
+void MV_Tellcolor(uint8_t *openmv)
+{
+    boardcolor[colorflag] = openmv[2];
+    colorflag ++;
+    procedure ++;
 }

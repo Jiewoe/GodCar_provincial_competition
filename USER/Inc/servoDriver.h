@@ -3,8 +3,15 @@
 
 #include "stm32h7xx_hal.h"
 #include "sys.h"
+#include "openmv.h"
 
 //计数器最大值
+
+
+#define PI 3.1415
+
+
+
 #define TIM5_ARR  19999
 #define TIM12_ARR 19999
 #define TIM14_ARR 19999
@@ -126,6 +133,7 @@ extern ActionParameter stageangle;
 extern ActionParameter specialLineAngle;
 extern ActionParameter materialAngle;
 extern ActionParameter waitAngle;
+extern ActionParameter Calculate_angle;
 
 extern TIM_HandleTypeDef htim5;
 extern TIM_HandleTypeDef htim12;
@@ -158,6 +166,8 @@ void ActionFunc(ActionParameter angle);
 void PickCargo_Logic(void);
 void DisposeCargo_Logic(void);
 void DisposeCargo_Ground(ActionParameter down);
+
+void Servo_process(uint8_t zhengfu, uint8_t yuntai, uint8_t jixiebifuhao, uint8_t jixiebipiancha);
 /*
     1---红色
     2---绿色

@@ -22,7 +22,7 @@ void DisPlay_Porcess(uint8_t *buffer)
             if (buffer[6] == 0x01) // 1号滑块
             {
                 HolderControl((uint16_t)(buffer[10] * 256 + buffer[11]));
-                printf("\nHolder:%d\n", (uint16_t)(buffer[10] * 256 + buffer[11]));
+                 printf("\nHolder:%d\n", (uint16_t)(buffer[10] * 256 + buffer[11]));
             }
             if (buffer[6] == 0x02)
             {
@@ -120,14 +120,14 @@ void DisPlay_Porcess(uint8_t *buffer)
 
             else if (buffer[6] == 0x04 && buffer[9] == 0)
             {
-                IF_CIRCLE = 1;
+                // IF_CIRCLE = 1;
                 ActionFunc (circleAngle);
                 
-                HAL_UART_Transmit (&huart2, FCircle, 7, 0x00ff);
+                // HAL_UART_Transmit (&huart2, FCircle, 7, 0x00ff);
             }
             else if (buffer[6] == 0x05 && buffer[9] == 0)
             {
-                IF_LINE = 1;
+                // IF_LINE = 1;
                 ActionFunc (specialLineAngle);
 
                 HAL_UART_Transmit(&huart2, SLine, 7, 0x00ff);
@@ -136,7 +136,7 @@ void DisPlay_Porcess(uint8_t *buffer)
             {
                 PawControl (120);
 
-                HAL_UART_Transmit (&huart3, SCode, 7, 0x00ff);
+                HAL_UART_Transmit (&huart2,Flocation, 7, 0x00ff);
             }
             else if (buffer[6] == 0x07 && buffer[9] == 0)
             {

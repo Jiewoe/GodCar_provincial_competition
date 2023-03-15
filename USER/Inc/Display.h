@@ -9,7 +9,7 @@
 #define Display_Buffer 0x24040000
 
 extern UART_HandleTypeDef huart4;
-extern uint8_t target;
+extern volatile uint8_t target;
 
 void DisPlay_Porcess(uint8_t *buffer);
 void DisPlay_Init();

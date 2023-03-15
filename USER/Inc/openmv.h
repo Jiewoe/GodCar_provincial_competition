@@ -3,6 +3,7 @@
 
 #include "sys.h"
 #include "motor.h"
+#include "servoDriver.h"
 
 void openmv_Init(void);
 void MV_DataProcess1 (uint8_t* openmv);
@@ -15,12 +16,16 @@ void MV_filter_Process(uint8_t* openmv, uint8_t yuzhi);
 void ClearBuffer (uint8_t *buffer);
 void MV_StopSearchLine (void);
 
+
 extern const uint8_t SLine[7];
 extern const uint8_t FCircle[7];
 extern const uint8_t Stop[7];
 extern const uint8_t SCode[7];
 extern const uint8_t Smaterial[7];
-extern const uint8_t Swuliao[7];
+extern uint8_t Swuliao[7];
+extern uint8_t Pick_ins;
+extern const uint8_t Flocation[7];
+extern const uint8_t Tellcolor[7];
 
 
 

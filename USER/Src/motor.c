@@ -8,8 +8,8 @@ uint8_t round3 = 0;
 uint8_t round4 = 0;
 
 // 单位厘米
-uint8_t target = 0;
-uint8_t IF_OUT = 0;
+uint8_t volatile target = 0;
+uint8_t volatile IF_OUT = 0;
 uint8_t left_target = 0;
 uint8_t right_target = 0;
 
@@ -24,10 +24,10 @@ Queue circleData = {0, {{0, 0}, {0, 0}, {0, 0}}};
 
 // 状态控制
 // 这在里可以增加开始按钮
-uint8_t procedure = 0;
+uint8_t volatile procedure = 0;
 
 // 是否移动
-uint8_t IF_MOVE = 0;
+uint8_t volatile IF_MOVE = 0;
 
 // motor2 60000-x
 //============初始化轮子============
@@ -51,6 +51,7 @@ void Motor_Init()
     HAL_GPIO_WritePin(Motor_GPIO, Motor1_Pin | Motor2_Pin | Motor3_Pin | Motor4_Pin, GPIO_PIN_RESET);
 }
 
+
 void Move_Stop(void)
 {
     round1 = round2 = round3 = round4 = 0;
@@ -59,19 +60,20 @@ void Move_Stop(void)
     HAL_GPIO_WritePin(Motor_GPIO, Motor1_Pin | Motor2_Pin | Motor3_Pin | Motor4_Pin, GPIO_PIN_RESET);
 }
 
+
 void Move_Forward()
 {
     int Piancha = target - (double)(((float)(round2 + round4) / 2 + (float)(Motor2_CNT + Motor4_CNT) / 120000) * 3.14 * 6);
-    printf("偏差是%d\n", Piancha);
-    printf("CNT:%d", Motor2_CNT);
-    printf("round:%d", round2);
+    // printf("偏差是%d\n", Piancha);
+    // printf("CNT:%d", Motor2_CNT);
+    // printf("round:%d", round2);
     //=====完成操作=======
     if (Piancha < 2)
     {
         target = 0;
         IF_MOVE = 0;
         Motor2_Speed = Motor4_Speed = 0; // 停车
-        Motor2_CNT = Motor4_CNT = 0;
+        Motor2_CNT = Motor4_CNT = 1000;
         round2 = round4 = 0;
         procedure++;
         return;
@@ -95,36 +97,13 @@ void Move_Forward()
 */
 void Move_Out()
 {
-    int Piancha = target - (double)(((float)(round2 + round4) / 2 + (float)(Motor2_CNT + Motor4_CNT) / 120000) * 3.14 * 6);
-    printf("偏差是%d\n", Piancha);
-    printf("CNT:%d", Motor2_CNT);
-    printf("round:%d", round2);
-    //=====完成操作=======
-    if (Piancha < 2)
-    {
-        target = 0;
-        IF_OUT = 0;
-        Motor2_Speed = Motor4_Speed = 0; // 停车
-        Motor3_Speed = Motor1_Speed = 0;
-        Motor1_CNT = Motor3_CNT = 0;
-        Motor2_CNT = Motor4_CNT = 0;
-        round2 = round4 = 0;
-        procedure++;
-        return;
-    }
-    //======进行线性启动=======
-    // 最低速度为500
-    if (target - Piancha < 10)
-    {
-        Motor1_Speed = Motor3_Speed = Motor2_Speed = Motor4_Speed = max(1000, (target - Piancha) * 250); // 在这里调整最大速度
-        return;
-    }
-    //======进行线性停止=======
-    if (Piancha < 10)
-    {
-        Motor1_Speed = Motor3_Speed = Motor2_Speed = Motor4_Speed = max(1000, (Piancha)*250);
-        return;
-    }
+    uint16_t speed = 1500;
+    HAL_GPIO_WritePin(Motor_GPIO, Motor3_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(Motor_GPIO, Motor1_Pin, GPIO_PIN_RESET);
+    Motor3_Speed = speed;
+    Motor1_Speed = speed;
+    HAL_Delay (800);
+    Move_Stop();
 }
 
 /*
@@ -143,7 +122,7 @@ void Move_Out()
 */
 void Lateral_correction(uint8_t sign, uint8_t piancha, uint8_t sign2, uint8_t hengPia)
 {
-    if(IF_FINISHLINE == 1) return;    //巡线未开启（或被关闭）直接退出, 只有在开启找圆前才用这个标志位，为了防止从巡线角度打到找圆角度时，巡线剩余消息进入导致车辆乱动
+    // if(CLEARFLAG == 1) return;    //巡线未开启（或被关闭）直接退出, 只有在开启找圆前才用这个标志位，为了防止从巡线角度打到找圆角度时，巡线剩余消息进入导致车辆乱动
 
     
     uint16_t move_speed = 800; 
@@ -176,13 +155,13 @@ void Lateral_correction(uint8_t sign, uint8_t piancha, uint8_t sign2, uint8_t he
             Motor3_Speed = 6000 - rotate_speed;
         }
     }
-    if (piancha < 2)
+    else
     {
         HAL_GPIO_WritePin(Motor_GPIO, Motor1_Pin, GPIO_PIN_SET);
         HAL_GPIO_WritePin(Motor_GPIO, Motor3_Pin, GPIO_PIN_RESET);
         Motor1_Speed = 6000;
         Motor3_Speed = 0;
-        if (hengPia > 20)
+        if (hengPia > 15)
         {
             if (sign2 == 0)
             {
@@ -205,7 +184,6 @@ void Lateral_correction(uint8_t sign, uint8_t piancha, uint8_t sign2, uint8_t he
             HAL_GPIO_WritePin(Motor_GPIO, Motor3_Pin, GPIO_PIN_RESET);
             Motor1_Speed = 6000;
             Motor3_Speed = 0;
-
             IF_LINE = 1;
         }
     }
@@ -280,7 +258,7 @@ void MOVE_MV_micro(uint8_t symheng, uint8_t heng, uint8_t symzong, uint8_t zong)
         Move_Stop();
         IF_CIRCLE = 0;
 
-        IF_FINISHLINE = 0;
+        // CLEARFLAG = 0;
         procedure ++;
     }
 }
@@ -346,10 +324,10 @@ int max(int a, int b)
 
 void printCnt(void)
 {
-    // printf("\nround1 and round2: %d %d\n", round1, round2);
-    // printf("round3 and round4: %d %d\n", round3, round4);
-    printf("cnt1 and cnt2: %d %d\n", Motor1_CNT, Motor2_CNT);
-    printf("cnt3 and cnt4: %d %d\n", Motor3_CNT, Motor4_CNT);
+    // // printf("\nround1 and round2: %d %d\n", round1, round2);
+    // // printf("round3 and round4: %d %d\n", round3, round4);
+    // printf("cnt1 and cnt2: %d %d\n", Motor1_CNT, Motor2_CNT);
+    // printf("cnt3 and cnt4: %d %d\n", Motor3_CNT, Motor4_CNT);
 }
 
 
