@@ -185,6 +185,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>Motor2_CNT</ItemText>
         </Ww>
+        <Ww>
+          <count>7</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>boardcolor[6]</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
@@ -197,7 +202,7 @@
         <Mm>
           <WinNumber>1</WinNumber>
           <SubType>0</SubType>
-          <ItemText>0x24000000+0x40000</ItemText>
+          <ItemText>0x24000080</ItemText>
           <AccSizeX>0</AccSizeX>
         </Mm>
       </MemoryWindow1>

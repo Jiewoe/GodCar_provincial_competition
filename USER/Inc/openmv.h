@@ -15,6 +15,7 @@ void ShowAssignmentCode(uint8_t *openmv);
 void MV_filter_Process(uint8_t* openmv, uint8_t yuzhi);
 void ClearBuffer (uint8_t *buffer);
 void MV_StopSearchLine (void);
+void MV_Tellcolor(uint8_t *openmv);
 
 
 extern const uint8_t SLine[7];

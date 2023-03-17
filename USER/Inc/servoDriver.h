@@ -101,7 +101,7 @@ typedef struct CargoActionPara
 {
     uint8_t rightArm;
     uint8_t leftArm;
-    uint16_t holder;
+    float holder;
     uint8_t cargoNo;
 
 } ActionParameter;
@@ -120,9 +120,9 @@ extern ActionParameter Cargo2_FetchUp;
 extern ActionParameter Cargo3_FetchDown;
 extern ActionParameter Cargo3_FetchUp;
 
-extern ActionParameter CargoRed_GroundDown;
-extern ActionParameter CargoBlue_GroundDown;
-extern ActionParameter CargoGreen_GroundDown;
+extern ActionParameter Board1_GroundDown;
+extern ActionParameter Board3_GroundDown;
+extern ActionParameter Board2_GroundDown;
 
 extern ActionParameter freeAngle;
 extern ActionParameter lineAngle;
@@ -134,6 +134,7 @@ extern ActionParameter specialLineAngle;
 extern ActionParameter materialAngle;
 extern ActionParameter waitAngle;
 extern ActionParameter Calculate_angle;
+extern ActionParameter farcircleagnle;
 
 extern TIM_HandleTypeDef htim5;
 extern TIM_HandleTypeDef htim12;
@@ -143,7 +144,7 @@ extern uint8_t NowAngle_Cargo;
 extern uint8_t NowAngle_Paw;
 extern uint8_t NowAngle_LeftArm;
 extern uint8_t NowAngle_RightArm;
-extern uint16_t NowAngle_Holder;
+extern float NowAngle_Holder;
 
 extern uint8_t  CargoStatus_1;
 extern uint8_t  CargoStatus_2;
@@ -152,7 +153,8 @@ extern uint8_t  CargoStatus_3;
 extern uint8_t cargo_flag;
 
 void Servo_Init(void);
-void HolderControl(uint16_t angle);
+void HolderControl(float angle);
+void HolderSet(float angle);
 void PawControl(uint8_t angle);
 void LeftArmControl (uint8_t LeftAngle);
 void RightArmControl (uint8_t RightAngle);

@@ -205,7 +205,7 @@ void MOVE_MV_micro(uint8_t symheng, uint8_t heng, uint8_t symzong, uint8_t zong)
     uint16_t speed = 900;
     if (IF_CIRCLE != 1) //置1是执行
         return;
-    if (heng > 8)
+    if (heng > 5)
     {
         if (symheng == 0)
         {
@@ -229,7 +229,7 @@ void MOVE_MV_micro(uint8_t symheng, uint8_t heng, uint8_t symzong, uint8_t zong)
         Motor2_Speed = 0;
         Motor4_Speed = 0;
     }
-    if (zong > 8) // 阈值调整
+    if (zong > 5) // 阈值调整
     {
         if (symzong == 1)
         {

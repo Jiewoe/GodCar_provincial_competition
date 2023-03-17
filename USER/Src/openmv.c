@@ -55,7 +55,7 @@ void MV_DataProcess1(uint8_t *openmv)
     else if (openmv[1] == 0x02) // 开始巡线
     {
         HAL_UART_Transmit(&huart1, openmv, 7, 0xff);
-        MV_filter_Process(openmv, 5);                                   // 滤波
+        MV_filter_Process(openmv, 3);                                   // 滤波
         Lateral_correction(openmv[2], openmv[3], openmv[4], openmv[5]); // 巡线矫正
     }
 
@@ -191,8 +191,10 @@ void MV_filter_Process(uint8_t *openmv, uint8_t yuzhi)
 void MV_StopSearchLine(void)
 {
     HAL_UART_Transmit(&huart2, Stop, 7, 0x00ff);
+    HAL_Delay (500);
     Move_Stop();
     IF_LINE = 0;
+    CLEARFLAG = 1;
 }
 
 // openmv 返回颜色的处理函数

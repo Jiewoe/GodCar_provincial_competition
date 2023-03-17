@@ -13,7 +13,7 @@
 // uint8_t  NowAngle_Paw;
 uint8_t NowAngle_LeftArm;
 uint8_t NowAngle_RightArm;
-uint16_t NowAngle_Holder;
+float NowAngle_Holder;
 
 uint8_t CargoStatus_1;
 uint8_t CargoStatus_2;
@@ -27,32 +27,33 @@ uint8_t cargo_flag = 0;
 /*
     机械臂取放动作参数
 */
-ActionParameter Cargo1_ActionDown = {147, 52, 210, 1}; // 1号货架放下动作参数
-ActionParameter Cargo1_ActionUp = {155, 24, 210, 1};   // 1号货架抬起动作参数,下同
+ActionParameter Cargo1_ActionDown = {146, 61, 207, 1}; // 1号货架放下动作参数
+ActionParameter Cargo1_ActionUp = {160, 16, 207, 1};   // 1号货架抬起动作参数,下同
 
-ActionParameter Cargo2_ActionDown = {155, 48, 237, 2};
-ActionParameter Cargo2_ActionUp = {155, 24, 237, 2};
+ActionParameter Cargo2_ActionDown = {158, 55, 234, 2};
+ActionParameter Cargo2_ActionUp = {163, 20, 234, 2};
 
-ActionParameter Cargo3_ActionDown = {145, 65, 267, 3};
-ActionParameter Cargo3_ActionUp = {155, 24, 267, 3};
+ActionParameter Cargo3_ActionDown = {148, 60, 260, 3};
+ActionParameter Cargo3_ActionUp = {155, 24, 260, 3};
 
-ActionParameter Cargo1_FetchDown = {150, 47, 208, 1};
-ActionParameter Cargo1_FetchUp = {153, 25, 208, 1};
+ActionParameter Cargo1_FetchDown = {146, 55, 207, 1};
+ActionParameter Cargo1_FetchUp = {160, 16, 207, 1};
 
-ActionParameter Cargo2_FetchDown = {165, 39, 235, 2};
-ActionParameter Cargo2_FetchUp = {163, 20, 235, 2};
+ActionParameter Cargo2_FetchDown = {158, 55, 234, 2};
+ActionParameter Cargo2_FetchUp = {163, 20, 234, 2};
 
-ActionParameter Cargo3_FetchDown = {155, 48, 266, 3};
-ActionParameter Cargo3_FetchUp = {155, 26, 266, 3};
+ActionParameter Cargo3_FetchDown = {145, 55, 260, 3};
+ActionParameter Cargo3_FetchUp = {168, 20, 260, 3};
 
 /*
     地面物料拿取、放置
 */
-ActionParameter CargoRed_GroundDown = {65, 120, 23, 1};
-ActionParameter CargoBlue_GroundDown = {55, 118, 87, 3};
-ActionParameter CargoGreen_GroundDown = {52, 142, 54, 2};
+ActionParameter Board1_GroundDown = {65, 120, 23, 1};
+ActionParameter Board3_GroundDown = {55, 118, 87, 3};
+ActionParameter Board2_GroundDown = {52, 142, 54, 2};
 
 ActionParameter Calculate_angle;
+
 
 /*
     自由位置（过渡位置）freeAngle
@@ -74,6 +75,7 @@ ActionParameter lineAngle = {120, 65, 58, 0};
 
 */
 ActionParameter circleAngle = {95, 55, 58, 0};
+ActionParameter farcircleagnle = {80, 50, 58, 0};
 
 /*
     扫码位置scanCodeAngle
@@ -139,28 +141,28 @@ void Servo_Init(void)
     >> 更新角度nowAngle
 
 */
-void HolderSet(uint16_t angle)
+void HolderSet(float angle)
 {
     Servo5_Angle = (uint32_t)((angle * 1.0 / 270.0) * HOLDER_FULL_ANGLE) + ZERO_ANGLE;
 }
 
-void HolderControl(uint16_t angle)
+void HolderControl(float angle)
 {
     int speed = 300000;
     if (angle <= 270)
     {
-        if (NowAngle_Holder > angle)
+        if (NowAngle_Holder > angle + 1)
         {
-            for (uint16_t angle_temp = NowAngle_Holder; angle_temp >= angle; angle_temp--)
+            for (float angle_temp = NowAngle_Holder; angle_temp >= angle; angle_temp--)
             {
                 HolderSet(angle_temp);
                 for (volatile int i = 0; i < speed; i++)
                     ;
             }
         }
-        else
+        else if (NowAngle_Holder < angle - 1)
         {
-            for (uint16_t angle_temp = NowAngle_Holder; angle_temp <= angle; angle_temp++)
+            for (float angle_temp = NowAngle_Holder; angle_temp <= angle; angle_temp++)
             {
                 HolderSet(angle_temp);
                 for (volatile int i = 0; i < speed; i++)
@@ -171,6 +173,8 @@ void HolderControl(uint16_t angle)
         // Servo5_Angle = (uint32_t)((angle * 1.0 / 270.0) * HOLDER_FULL_ANGLE) + ZERO_ANGLE;
 
         NowAngle_Holder = angle;
+        HolderSet(NowAngle_Holder);
+        return;
     }
     else
         return;
@@ -274,7 +278,7 @@ void CargoSet(uint8_t Cargo_pos, uint8_t SetStatus)
         {
             if (SetStatus == CARGO_SET)
             {
-                Servo1_Angle = (uint32_t)(CARGO_FULL_ANGLE + ZERO_ANGLE);
+                Servo1_Angle = (uint32_t)(CARGO_FULL_ANGLE + ZERO_ANGLE - 100);
                 CargoStatus_1 = SetStatus;
             }
             else if (SetStatus == CARGO_UNSET)
@@ -312,7 +316,7 @@ void CargoSet(uint8_t Cargo_pos, uint8_t SetStatus)
         {
             if (SetStatus == CARGO_SET)
             {
-                Servo3_Angle = (uint32_t)(CARGO_FULL_ANGLE + ZERO_ANGLE - 40);
+                Servo3_Angle = (uint32_t)(CARGO_FULL_ANGLE + ZERO_ANGLE - 50);
                 CargoStatus_3 = SetStatus;
             }
             else if (SetStatus == CARGO_UNSET)
@@ -335,9 +339,9 @@ void CargoSet(uint8_t Cargo_pos, uint8_t SetStatus)
 */
 void ActionFunc(ActionParameter angle)
 {
+    HolderControl(angle.holder);
     RightArmControl(angle.rightArm);
     LeftArmControl(angle.leftArm);
-    HolderControl(angle.holder);
 }
 
 /*
@@ -348,8 +352,9 @@ void CargoAction(ActionParameter up, ActionParameter down)
 {
     // 回归自由度数
     ActionFunc(freeAngle);
+    // 这里要等
 
-    HAL_Delay(400);
+    HAL_Delay(1000);
 
     // 调整合适的移动角度，打开载物台
     if (up.cargoNo == 1)
@@ -359,13 +364,13 @@ void CargoAction(ActionParameter up, ActionParameter down)
     }
     else if (up.cargoNo == 2 || up.cargoNo == 3)
     {
-        RightArmControl(125);
-        LeftArmControl(32);
+        RightArmControl(120);
+        LeftArmControl(26);
     }
 
     CargoSet(up.cargoNo, 0);
 
-    HAL_Delay(600);
+    // HAL_Delay(600);
 
     // 移动到载物台上方
     HolderControl(up.holder);
@@ -390,17 +395,17 @@ void CargoAction(ActionParameter up, ActionParameter down)
     LeftArmControl(up.leftArm);
     RightArmControl(up.rightArm);
 
-    HAL_Delay(600);
+    // HAL_Delay(600);
 
     // LeftArmControl (35);
     // RightArmControl (140);
-    HAL_Delay(500);
+    // HAL_Delay(500);
 
     // 载物台关闭，移开机械臂
     CargoSet(down.cargoNo, 1);
     HolderControl(180);
 
-    HAL_Delay(500);
+    // HAL_Delay(500);
     PawControl(100);
 
     // 回归自由角度
@@ -430,20 +435,20 @@ void CargoFetch(ActionParameter up, ActionParameter down)
     PawControl(115);
     // CargoSet(up.cargoNo, 0);
 
-    // HAL_Delay(800);
+    HAL_Delay(500);
 
     LeftArmControl(down.leftArm);
     RightArmControl(down.rightArm);
 
-    // HAL_Delay(500);
+    HAL_Delay(500);
 
     PawControl(80);
 
-    // HAL_Delay(300);
+    HAL_Delay(500);
 
     // 调整移出角度
-    RightArmControl(125);
-    LeftArmControl(30);
+    RightArmControl(120);
+    LeftArmControl(26);
 
     // HAL_Delay(600);
     CargoSet(up.cargoNo, 1);
@@ -522,7 +527,7 @@ void PickCargo_Ground(ActionParameter down)
     HAL_Delay(600);
 
     // 放置到载物台
-    switch (down.cargoNo)
+    switch (boardcolor[colorflag])
     {
     case 1: // red
         CargoAction(Cargo1_ActionUp, Cargo1_ActionDown);
@@ -542,8 +547,95 @@ void DisposeCargo_Ground(ActionParameter down)
 {
     ActionFunc(freeAngle);
 
-    // 从载物台上拿到物块
-    switch (down.cargoNo)
+    HAL_Delay(1000);
+
+    // 移动到放置点上方
+    HolderControl(down.holder);
+
+    // HAL_Delay(800);
+
+    // 放下物块
+    RightArmControl((down.rightArm + circleAngle.rightArm) / 2);
+    LeftArmControl((down.leftArm + circleAngle.leftArm) / 2);
+    RightArmControl(down.rightArm);
+    LeftArmControl(down.leftArm);
+
+    HAL_Delay(1000);
+
+    // 打开抓夹
+    PawControl(120);
+
+    // HAL_Delay(400);
+
+    if (colorflag == 1 || colorflag == 4)
+    {
+        LeftArmControl(151);
+        RightArmControl(80);
+        HAL_Delay(600);
+    }
+
+    // 先上抬机械臂
+    if (procedure < 56)
+    {
+        RightArmControl(100); // 100
+        LeftArmControl(118);  // 118
+    }
+    else 
+    {
+        RightArmControl (140);
+        LeftArmControl (75);
+
+        HolderControl (135);
+    }
+    // HAL_Delay(600);
+
+    // 回到找圆的姿势
+    RightArmControl(circleAngle.rightArm);
+    LeftArmControl(circleAngle.leftArm);
+    PawControl(90);
+
+    // HAL_Delay(500);
+
+    // 云台回归
+    // HolderControl(down.holder);
+
+    // HAL_Delay(800);
+}
+
+/*
+    抓取逻辑
+*/
+void PickCargo_Logic(void)
+{
+    for (uint8_t i = 1; i < 4; i++)
+    {
+        switch (i)
+        {
+        case 1:
+            PickCargo_Ground(Board1_GroundDown);
+            break;
+        case 2:
+            PickCargo_Ground(Board2_GroundDown);
+            break;
+        case 3:
+            PickCargo_Ground(Board3_GroundDown);
+            break;
+        }
+
+        colorflag++;
+        // PickCargo_Ground()
+    }
+}
+
+/*
+    放置逻辑
+    选取合适颜色的物块进行方式
+    取出boardcolor中的颜色信息
+*/
+void DisposeCargo_Logic(void)
+{
+    PawControl(180);
+    switch (boardcolor[colorflag])
     {
     case 1:
         CargoFetch(Cargo1_FetchUp, Cargo1_FetchDown);
@@ -555,120 +647,48 @@ void DisposeCargo_Ground(ActionParameter down)
         CargoFetch(Cargo3_FetchUp, Cargo3_FetchDown);
         break;
     }
+    colorflag++;
 
-    // HAL_Delay(1200);
-
-    // 移动到放置点上方
-    HolderControl(down.holder);
-
-    // HAL_Delay(800);
-
-    // 放下物块
-    RightArmControl(down.rightArm);
-    LeftArmControl(down.leftArm);
-
-    HAL_Delay(1000);
-
-    // 打开抓夹
-    PawControl(120);
-
-    // HAL_Delay(400);
-
-    if (down.cargoNo == 2)
-    {
-        LeftArmControl(151);
-        RightArmControl(80);
-        // HAL_Delay(600);
-    }
-
-    // 先上抬机械臂
-    LeftArmControl(118);  // 118
-    RightArmControl(100); // 100
-
-    // HAL_Delay(600);
-
-    // 回到找圆的姿势
-    RightArmControl(circleAngle.rightArm);
-    LeftArmControl(circleAngle.leftArm);
-    PawControl(90);
-
-    // HAL_Delay(500);
-
-    // 云台回归
-    HolderControl(down.holder);
-
-    HAL_Delay(800);
+    DisposeCargo_Ground(Calculate_angle);
 }
 
 /*
-    抓取逻辑
+    进行逆结算并且将角度存在对应的boardangle里面
+    方便拿起来时候用
+    但是要进行调整
+    procedure++;
 */
-void PickCargo_Logic(void)
-{
-    for (uint8_t i = 0; i < 3; i++)
-    {
-        switch (Assignment[i])
-        {
-        case 1:
-            PickCargo_Ground(CargoRed_GroundDown);
-            break;
-        case 2:
-            PickCargo_Ground(CargoGreen_GroundDown);
-            break;
-        case 3:
-            PickCargo_Ground(CargoBlue_GroundDown);
-            break;
-        }
-    }
-}
-
-/*
-    放置逻辑
-*/
-void DisposeCargo_Logic(void)
-{
-    for (uint8_t i = 0; i < 3; i++)
-    {
-        switch (Assignment[i])
-        {
-        case 1:
-            DisposeCargo_Ground(CargoRed_GroundDown);
-            break;
-        case 2:
-            DisposeCargo_Ground(CargoGreen_GroundDown);
-            break;
-        case 3:
-            DisposeCargo_Ground(CargoBlue_GroundDown);
-            break;
-        }
-    }
-}
-
 void Servo_process(uint8_t zhengfu, uint8_t yuntai, uint8_t jixiebifuhao, uint8_t jixiebipiancha)
 {
-    static int angle;
-    if (yuntai > 3)
+    // 复数先向前特定度数消灭回程查
+    if (zhengfu == 1 && yuntai > 3)
     {
-        if (zhengfu > 0)
-        {
-            NowAngle_Holder = NowAngle_Holder + 1;
-            HolderSet(NowAngle_Holder);
-        }
-        else
-        {
-            NowAngle_Holder = NowAngle_Holder - 1;
-            HolderSet(NowAngle_Holder);
-        }
+        // 这里不精确
+        HolderControl(NowAngle_Holder + 10);
+        HAL_UART_Transmit(&huart2, Flocation, 7, 0xff);
+        return;
+    }
+    // 云台大于3就要调整，小于不用
+    if ((yuntai > 5))
+    {
+        NowAngle_Holder = NowAngle_Holder - 1;
+        HolderSet(NowAngle_Holder);
         // for (volatile int i; i<100000; i++);
         HAL_UART_Transmit(&huart2, Flocation, 7, 0xff);
-        angle = NowAngle_Holder;
+        return;
+    }else if ((yuntai > 3))
+    {
+        NowAngle_Holder = NowAngle_Holder - 0.5;
+        HolderSet(NowAngle_Holder);
+        // for (volatile int i; i<100000; i++);
+        HAL_UART_Transmit(&huart2, Flocation, 7, 0xff);
         return;
     }
     else
     {
-        HAL_UART_Transmit(&huart2, Stop, 7, 0xff);
+
         int fuhao;
-        if (jixiebifuhao ==  1)
+        if (jixiebifuhao == 1)
         {
             fuhao = 1;
         }
@@ -676,29 +696,92 @@ void Servo_process(uint8_t zhengfu, uint8_t yuntai, uint8_t jixiebifuhao, uint8_
         {
             fuhao = -1;
         }
-        int a = -40;
-        double p = 86.03 + 118.20 - 80 + (double)jixiebipiancha * fuhao / 1.7 + a;
-        double k = acos((sqrt(p * p + (124.8-15) * (124.8-15)) / 2) / 150);
-        double m = atan(p / 119.5);
+        /*
+            a由于openmv带来的倾斜导致的x坐标偏差
+            jixiebipiancha 是openmv测出的像素点
+            p是x距离
+            k是等腰三角形的地角
+            m是三角形到Y轴的角
+            n是右臂角度（角度制）
+            l是左臂角度（角度制）
+            除数可以改变 计算比例用s
+
+
+        */
+        float y0;
+        if (procedure < 56)
+        {
+            y0 = 125 - 5; // 减小是变高
+        }
+        else 
+        {
+            y0 = 125 - 77;
+        }
+
+        int a = -15;        // 增大时向前
+        
+        
+        
+        float bili;
+        float x0;
+
+        if (colorflag != 1 || colorflag != 4)
+        {
+            //这里要改 调参数
+            bili = 1.4;
+            x0 = 274.79-80;
+        }
+        else
+        {
+            bili = 1.4;
+            x0 = 86.03 + 118.20 - 80;
+        }
+
+        double p = x0 + (double)jixiebipiancha * fuhao /bili + a;
+        double k = acos((sqrt(p * p + (y0) * (y0)) / 2) / 150);
+        double m = atan(p / (y0));
         double n = (PI - k - m) / PI * 180; //
         double l = (PI / 2 - m + k) / PI * 180;
-        Calculate_angle.leftArm = l + 30;
-        Calculate_angle.rightArm = 136 - n;
-        Calculate_angle.holder = angle;
+
+        Calculate_angle.leftArm = l + 35;
+        Calculate_angle.rightArm = 140 - n;
         Calculate_angle.cargoNo = 0;
+        // Calculate_angle.holder = NowAngle_Holder-1.7;
 
 
-        CargoFetch(Cargo1_FetchUp, Cargo1_FetchDown);
-        HolderControl (Calculate_angle.holder);
-        LeftArmControl(118);  // 118
-        RightArmControl(80); // 100
-        ActionFunc(Calculate_angle);
-        PawControl(180);
-        // HAL_Delay(1000);
-        RightArmControl(130); // 100
-        LeftArmControl(90);  // 118
+        // 测试用记得删除
+        // colorflag = 3;
 
+
+        if (colorflag == 1 || colorflag == 4)
+        {
+            Calculate_angle.holder = NowAngle_Holder;
+        }
+        else
+        {
+            Calculate_angle.holder = NowAngle_Holder;
+        }
+
+        // 这里要改拿不起来
+        switch (colorflag)
+        {
+        case 0:
+        case 3:
+            Board1_GroundDown = Calculate_angle;
+            break;
+        case 1:
+        case 4:
+            Board2_GroundDown = Calculate_angle;
+            break;
+        case 2:
+        case 5:
+            Board3_GroundDown = Calculate_angle;
+            break;
+        }
+        HAL_UART_Transmit(&huart2, Stop, 7, 0xff);
+
+        // cargo_flag = 10;
+
+        procedure++;
     }
-    // for (volatile int i; i<100000; i++);
-    // HAL_UART_Transmit (&huart2, Flocation, 7, 0xff);
 }
