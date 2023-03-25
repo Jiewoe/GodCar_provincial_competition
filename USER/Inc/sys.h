@@ -8,6 +8,7 @@
 void Procedure_Setting(uint8_t now);
 void showCase(void);
 int filter(int a, int YuZhi);
+void Color_holder_logic(void);
 
 extern uint8_t round1;
 extern uint8_t round2;
@@ -31,6 +32,7 @@ extern TIM_HandleTypeDef htim14;
 extern UART_HandleTypeDef huart5;
 extern UART_HandleTypeDef huart7;
 extern UART_HandleTypeDef huart8;
+extern UART_HandleTypeDef huart4;
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
 extern UART_HandleTypeDef huart3;
@@ -43,6 +45,7 @@ extern volatile uint8_t IF_OUT;
 extern uint8_t left_target;
 extern uint8_t right_target;
 extern uint8_t colorflag;
+extern uint8_t Assignmentneed;
 
 typedef struct 
 {

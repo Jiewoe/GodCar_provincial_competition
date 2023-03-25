@@ -329,8 +329,8 @@
             <uC99>1</uC99>
             <uGnu>1</uGnu>
             <useXO>0</useXO>
-            <v6Lang>3</v6Lang>
-            <v6LangP>5</v6LangP>
+            <v6Lang>5</v6Lang>
+            <v6LangP>6</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
@@ -623,6 +623,16 @@
               <FileName>openmv.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\USER\Src\openmv.c</FilePath>
+            </File>
+            <File>
+              <FileName>test.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\USER\Inc\test.h</FilePath>
+            </File>
+            <File>
+              <FileName>test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\Src\test.c</FilePath>
             </File>
           </Files>
         </Group>

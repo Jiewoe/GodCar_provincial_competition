@@ -49,7 +49,7 @@ void DisPlay_Porcess(uint8_t *buffer)
         }
 
         // 2号屏幕 机械臂动作
-        if (buffer[4] == 0x02)
+        if (buffer[4] == 0x02 && buffer[9] == 00)
         {
             switch (buffer[6])
             {
@@ -93,7 +93,8 @@ void DisPlay_Porcess(uint8_t *buffer)
             }
             if (buffer[6] == 3)
             {
-                procedure = 1;
+                // procedure = 1;
+                StartAction();
             }
         }
         // 4号屏幕
@@ -102,7 +103,10 @@ void DisPlay_Porcess(uint8_t *buffer)
 
             if (buffer[6] == 0x01 && buffer[9] == 00)
             {
-                HAL_UART_Transmit(&huart3, Swuliao, 7, 0xff);
+                char a[]= "hello";
+                HAL_UART_Transmit(&huart6, a, 5, 0xff);
+                // ActionFunc(waitAngle);
+                // Special_ActionFunc(waitAngle);
                 // cargo_flag = 10;
                 // ActionFunc (Board1_GroundDown);
             }
@@ -127,14 +131,16 @@ void DisPlay_Porcess(uint8_t *buffer)
             else if (buffer[6] == 0x05 && buffer[9] == 0)
             {
                 // IF_LINE = 1;
-                ActionFunc(specialLineAngle);
-
-                HAL_UART_Transmit(&huart2, SLine, 7, 0x00ff);
+                // ActionFunc(specialLineAngle);
+                ActionFunc(scanCodeAngle);
+                HAL_UART_Transmit(&huart2, SCode, 7, 0x00ff);
+                // cargo_flag = 11;
             }
             else if (buffer[6] == 0x06 && buffer[9] == 0)
             {
                 PawControl(120);
-
+                farcircleagnle.holder = 23;
+                ActionFunc(farcircleagnle);
                 HAL_UART_Transmit(&huart2, Flocation, 7, 0x00ff);
             }
             else if (buffer[6] == 0x07 && buffer[9] == 0)

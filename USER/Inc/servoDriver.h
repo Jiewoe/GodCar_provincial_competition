@@ -106,19 +106,19 @@ typedef struct CargoActionPara
 
 } ActionParameter;
 
-extern ActionParameter Cargo1_ActionDown;
-extern ActionParameter Cargo1_ActionUp;
-extern ActionParameter Cargo2_ActionDown;
-extern ActionParameter Cargo2_ActionUp;
-extern ActionParameter Cargo3_ActionDown;
-extern ActionParameter Cargo3_ActionUp;
+extern const ActionParameter Cargo1_ActionDown;
+extern const ActionParameter Cargo1_ActionUp;
+extern const ActionParameter Cargo2_ActionDown;
+extern const ActionParameter Cargo2_ActionUp;
+extern const ActionParameter Cargo3_ActionDown;
+extern const ActionParameter Cargo3_ActionUp;
 
-extern ActionParameter Cargo1_FetchDown;
-extern ActionParameter Cargo1_FetchUp;
-extern ActionParameter Cargo2_FetchDown;
-extern ActionParameter Cargo2_FetchUp;
-extern ActionParameter Cargo3_FetchDown;
-extern ActionParameter Cargo3_FetchUp;
+extern const ActionParameter Cargo1_FetchDown;
+extern const ActionParameter Cargo1_FetchUp;
+extern const ActionParameter Cargo2_FetchDown;
+extern const ActionParameter Cargo2_FetchUp;
+extern const ActionParameter Cargo3_FetchDown;
+extern const ActionParameter Cargo3_FetchUp;
 
 extern ActionParameter Board1_GroundDown;
 extern ActionParameter Board3_GroundDown;
@@ -151,6 +151,7 @@ extern uint8_t  CargoStatus_2;
 extern uint8_t  CargoStatus_3;
 
 extern uint8_t cargo_flag;
+extern uint8_t Piancha_flag;
 
 void Servo_Init(void);
 void HolderControl(float angle);
@@ -168,6 +169,9 @@ void ActionFunc(ActionParameter angle);
 void PickCargo_Logic(void);
 void DisposeCargo_Logic(void);
 void DisposeCargo_Ground(ActionParameter down);
+void ToStartAngle(void);
+void StartAction(void);
+void Special_ActionFunc(ActionParameter angle);
 
 void Servo_process(uint8_t zhengfu, uint8_t yuntai, uint8_t jixiebifuhao, uint8_t jixiebipiancha);
 /*

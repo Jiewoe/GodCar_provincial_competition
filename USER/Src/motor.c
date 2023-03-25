@@ -55,7 +55,7 @@ void Motor_Init()
 void Move_Stop(void)
 {
     round1 = round2 = round3 = round4 = 0;
-    Motor1_CNT = Motor2_CNT = Motor3_CNT = Motor4_CNT = 5000;
+    Motor1_CNT = Motor2_CNT = Motor3_CNT = Motor4_CNT = 3000;
     Motor1_Speed = Motor2_Speed = Motor3_Speed = Motor4_Speed = 0;
     HAL_GPIO_WritePin(Motor_GPIO, Motor1_Pin | Motor2_Pin | Motor3_Pin | Motor4_Pin, GPIO_PIN_RESET);
 }
@@ -82,7 +82,7 @@ void Move_Forward()
     // 最低速度为500
     if (target - Piancha < 10)
     {
-        Motor2_Speed = Motor4_Speed = max(1000, (target - Piancha) * 250); // 在这里调整最大速度
+        Motor2_Speed = Motor4_Speed = max(1000, (target - Piancha) * 500); // 在这里调整最大速度
         return;
     }
     //======进行线性停止=======
@@ -284,10 +284,9 @@ void Move_Turnleft()
     HAL_GPIO_WritePin(Motor_GPIO, Motor3_Pin | Motor4_Pin, GPIO_PIN_SET);
     Motor2_Speed = Motor1_Speed = 1500;
     Motor4_Speed = Motor3_Speed = 6000 - 1500;
-    HAL_Delay(1100);
+    HAL_Delay(1300);
 
     // 这里要改
-    procedure++;
     Motor_Init();
 }
 
